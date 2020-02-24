@@ -22,7 +22,7 @@ app.get('/games', (req, res) =>{
     request('http://api.steampowered.com/ISteamApps/GetAppList/v2', {json: true}, (err, response, body) => {
         if(err) {return console.log(err);}
         console.log(body);
-        res.send({express: 'hi'})
+        res.send({express: body})
         // res.send({express: JSON.stringify(body)})
     });
 });
