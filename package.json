@@ -1,23 +1,15 @@
 {
-  "name": "fe-winter2020-group-project",
+  "name": "express-test",
   "version": "1.0.0",
-  "description": "A dashboard front-end application that displays Steam information or Blizzard information for users. We will be using the Steam API or Blizzard API.",
-  "main": "app.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/greenunknown/fe-winter2020-group-project.git"
-  },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/greenunknown/fe-winter2020-group-project/issues"
-  },
-  "homepage": "https://github.com/greenunknown/fe-winter2020-group-project#readme",
   "dependencies": {
-    "chart.js": "^2.9.3",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "request": "^2.88.2"
   }
