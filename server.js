@@ -27,7 +27,7 @@ app.get('/games', (req, res) =>{
     });
 });
 
-app.get('/', (req, res) => {
+app.get('/search', (req, res) => {
     res.status(200);
     res.set({
         'Content-Type': 'text/html'
