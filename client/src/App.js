@@ -15,7 +15,7 @@ class App extends Component{
       .then(res => {
         let resjson = JSON.parse(res);
         console.log(resjson);
-        this.setState({ data: res, userid: resjson.response.steamid, success: resjson.response.success });
+        this.setState({ data: res});//, userid: resjson.response.steamid, success: resjson.response.success });
       })
       .catch(err => console.log(err));
   };
@@ -36,13 +36,13 @@ class App extends Component{
         <h1>Hello World, React!</h1>
         <form>
           <label>Steam User ID: 
-            <input type="text" name="userid" /> 
+            <input type="text" name="usersteamid" /> 
           </label>
           <input type="submit" value="Submit" />
         </form>
-        <p>{this.state.data} sdaflkjlaksdjf{this.state.userid}</p>
-        <p></p>
-        <p>{this.state.success}</p>
+        <p>{this.state.data}</p>
+        {/* <p>{this.state.userid}</p>
+        <p>{this.state.success}</p> */}
       </div>
     );
   }
