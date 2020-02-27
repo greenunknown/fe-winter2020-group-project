@@ -45,9 +45,9 @@ async function getSteamId(usersteamname, response) {
     let gameslist = await getJSON('http://api.steampowered.com/ISteamApps/GetAppList/v2');
     console.log("gameslist:", gameslist);
 
-    let data = [playerSum, friends, recentlyPlayed, ownedGames, gameslist];
+    let data = [playerSum, friends];//, recentlyPlayed, ownedGames, gameslist];
     response.send(data);
-
+    console.log(data);
 }
 
 
