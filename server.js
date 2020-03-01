@@ -36,6 +36,7 @@ async function getSteamId(usersteamname, response) {
 
     let friends = await getJSON('http://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key='+ key +'&steamid=' + usersteamid + "&relationship=friend");
     console.log("friends:", friends);
+    
     let recentlyPlayed = await getJSON('http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key='+ key +'&steamid=' + usersteamid);
     console.log("recentlyPlayed:", recentlyPlayed);
 
@@ -47,7 +48,6 @@ async function getSteamId(usersteamname, response) {
 
     let data = [playerSum, friends, recentlyPlayed, ownedGames, gameslist];
     response.send(data);
-
 }
 
 
