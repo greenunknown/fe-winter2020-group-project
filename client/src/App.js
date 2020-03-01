@@ -3,11 +3,32 @@ import React, { Component } from 'react';
 
 class App extends Component{
   state = {
-    playerSummary: null,
-    friendsList: null,
-    recentlyPlayed: null,
-    ownedGames: null,
-    gamesList: null
+    playerSummary: {
+      steamid: "",
+      personaname: "",
+      profileurl: "",
+      avatar: "",
+      avatarmedium: "",
+      avatarfull: "",
+      lastlogoff: 0,
+      timecreated: 0
+    },
+    friendsList: [
+      {
+        steamdid: "",
+        relationship: "",
+        friend_since: 0
+      }
+    ],
+    recentlyPlayed: {
+      total_count: 0,
+      games: []
+    },
+    ownedGames: {
+      game_count: 0,
+      games: []
+    },
+    gamesList: []
   };
  
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
@@ -33,17 +54,34 @@ class App extends Component{
       console.log(this.state.ownedGames);
   };
 
+  handleSubmit(event) {
+    event.preventDefault();
+  };
+
+  // function displayPlayerSummary() {
+  //   const playerSum = this.state.playerSummary.map((stat, index) => {
+  //     <p key={index}>{stat}</p>
+  //   });
+
+  //   return (
+      
+  //   )
+  // };
+
   render() {
     return (
       <div>
         <h1>Steam ID</h1>
-        <form>
+        <form onSubmit={this.handleSubmit}>
           <label>Steam User ID: 
             <input type="text" name="usersteamid" onChange={e => this.setState({ userid: e.target.value })}/> 
           </label>
-          <input type="button" value="Submit" onClick={this.callBackendAPI}/>
+          <input type="Submit" value="Submit" onClick={this.callBackendAPI} readOnly/>
         </form>
-    
+        <p>{this.state.playerSummary.steamid}</p>
+        {/* <p>{playerSum}</p> */}
+        {/* <p>{JSON.stringify(this.state.playerSummary)}</p> */}
+        <img src={this.state.playerSummary.avatarfull} alt="player avatar"></img>
       </div>
     );
   }
