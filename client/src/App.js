@@ -3,46 +3,47 @@ import React, { Component } from 'react';
 
 class App extends Component{
   state = {
-    data: null,
-    userid: null,
-    success: null
+    playerSummary: null,
+    friendsList: null,
+    recentlyPlayed: null,
+    ownedGames: null,
+    gamesList: null
   };
  
-  componentDidMount() {
-      // Call our fetch function below once the component mounts
-    this.callBackendAPI()
-      .then(res => res.text())
-      .then(res => {
-        let resjson = JSON.parse(res);
-        console.log(resjson);
-        this.setState({ data: res});//, userid: resjson.response.steamid, success: resjson.response.success });
-      })
-      .catch(err => console.log(err));
-  };
-  
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
   callBackendAPI = async () => {
-    const response = await fetch('http://localhost:5000/search');
-    const body = await response;
-    if (response.status !== 200) {
-      throw Error(body.message) 
-    }
-    return body;
+    const response = await fetch('http://localhost:5000/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId: this.state.userid }),
+    });
+      const data = await response.text();
+      var dataJSON = JSON.parse(data);
+      this.setState({playerSummary: dataJSON[0].response.players[0]})
+      this.setState({friendsList: dataJSON[1].friendslist.friends});
+      this.setState({recentlyPlayed: dataJSON[2].response});
+      this.setState({ownedGames: dataJSON[3].response});
+      this.setState({gamesList: dataJSON[4].applist.apps});
+
+      console.log(this.state.playerSummary);
+      console.log(this.state.friendsList);
+      console.log(this.state.recentlyPlayed);
+      console.log(this.state.ownedGames);
   };
 
   render() {
     return (
       <div>
-        <h1>Hello World, React!</h1>
+        <h1>Steam ID</h1>
         <form>
           <label>Steam User ID: 
-            <input type="text" name="usersteamid" /> 
+            <input type="text" name="usersteamid" onChange={e => this.setState({ userid: e.target.value })}/> 
           </label>
-          <input type="submit" value="Submit" />
+          <input type="button" value="Submit" onClick={this.callBackendAPI}/>
         </form>
-        <p>{this.state.data}</p>
-        {/* <p>{this.state.userid}</p>
-        <p>{this.state.success}</p> */}
+    
       </div>
     );
   }
