@@ -22,11 +22,11 @@ class App extends Component{
       timecreated: 0
     },
     friendsList: [
-      {
-        steamdid: "",
-        relationship: "",
-        friend_since: 0
-      }
+      // {
+      //   steamdid: "",
+      //   relationship: "",
+      //   friend_since: 0
+      // }
     ],
     recentlyPlayed: {
       total_count: 0,
@@ -67,6 +67,23 @@ class App extends Component{
   };
 
   render() {
+    const {friendsList, recentlyPlayed} = this.state;
+
+    // Time converter function by shomrat from: https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
+    // Retrieved on 3-2-20
+    function timeConverter(UNIX_timestamp){
+      var a = new Date(UNIX_timestamp * 1000);
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var year = a.getFullYear();
+      var month = months[a.getMonth()];
+      var date = a.getDate();
+      var hour = a.getHours();
+      var min = a.getMinutes();
+      var sec = a.getSeconds();
+      var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+      return time;
+    }
+
     return (
       <div>
         <Container>
@@ -91,15 +108,48 @@ class App extends Component{
                 <Card.Title>{this.state.playerSummary.personaname}</Card.Title>
                 <Card.Link href={this.state.playerSummary.profileurl}>Steam Profile</Card.Link>
                 <Card.Text>
-                  Last Log Off: {this.state.playerSummary.lastlogoff}
+                  Last Log Off: {timeConverter(this.state.playerSummary.lastlogoff)}
                   <br></br>
-                  Profile Created: {this.state.playerSummary.timecreated}
+                  Profile Created: {timeConverter(this.state.playerSummary.timecreated)}
                 </Card.Text>
               </Card.Body>
               </Card>
             </Col>
             <Col>
               <p>Friends List</p>
+              <div>
+                {friendsList.map((friend, i) => {
+                  return (
+                    <p key={i}>
+                      Friend: {friend.steamid}
+                      <br></br>
+                      Friend since: {timeConverter(friend.friend_since)}
+                    </p>
+                    )
+                })}
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+                <p>Recently Played</p>
+                <div>
+                  {recentlyPlayed.games.map((game, i, j, k) => {
+                    return (
+                      <div key={i}>
+                        <p>
+                          Game: {game.name}
+                          <br></br>
+                          {/* http://media.steampowered.com/steamcommunity/public/images/apps/APPID/IMG_ICON_URL.jpg
+                          http://media.steampowered.com/steamcommunity/public/images/apps/APPID/IMG_LOGO_URL.jpg */}
+                        </p>
+                        console.log({"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"})
+                        <img alt="game logo" scr={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"}/> 
+                          
+                      </div>
+                    )
+                  })}
+                </div>
             </Col>
           </Row>
         </Container>
