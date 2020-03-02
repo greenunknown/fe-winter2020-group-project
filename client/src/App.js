@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
 // import { render } from 'react-dom';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Form from 'react-bootstrap/Form';
+import FormControl from 'react-bootstrap/FormControl';
+import Card from 'react-bootstrap/Card';
 class App extends Component{
   state = {
     playerSummary: {
       steamid: "",
       personaname: "",
-      profileurl: "",
+      profileurl: "#",
       avatar: "",
       avatarmedium: "",
       avatarfull: "",
@@ -58,30 +66,43 @@ class App extends Component{
     event.preventDefault();
   };
 
-  // function displayPlayerSummary() {
-  //   const playerSum = this.state.playerSummary.map((stat, index) => {
-  //     <p key={index}>{stat}</p>
-  //   });
-
-  //   return (
-      
-  //   )
-  // };
-
   render() {
     return (
       <div>
-        <h1>Steam ID</h1>
-        <form onSubmit={this.handleSubmit}>
-          <label>Steam User ID: 
-            <input type="text" name="usersteamid" onChange={e => this.setState({ userid: e.target.value })}/> 
-          </label>
-          <input type="Submit" value="Submit" onClick={this.callBackendAPI} readOnly/>
-        </form>
-        <p>{this.state.playerSummary.steamid}</p>
-        {/* <p>{playerSum}</p> */}
-        {/* <p>{JSON.stringify(this.state.playerSummary)}</p> */}
-        <img src={this.state.playerSummary.avatarfull} alt="player avatar"></img>
+        <Container>
+          <h1>Steam Dash</h1>
+          <Row>
+            <Col md lg="4">
+              <Form onSubmit={this.handleSubmit}>
+                  <InputGroup className="mb-1">
+                    <FormControl placeholder="Steam Username" aria-label="Steam Username" onChange={e => this.setState({ userid: e.target.value })}/>
+                    <InputGroup.Append>
+                      <Button type="Submit" value="Submit" onClick={this.callBackendAPI} readOnly>Submit</Button>
+                    </InputGroup.Append>
+                  </InputGroup>
+              </Form>
+            </Col>
+          </Row>
+          <Row>
+            <Col md lg="4">
+              <Card >
+              <Card.Img variant="top" src={this.state.playerSummary.avatarfull} />
+              <Card.Body>
+                <Card.Title>{this.state.playerSummary.personaname}</Card.Title>
+                <Card.Link href={this.state.playerSummary.profileurl}>Steam Profile</Card.Link>
+                <Card.Text>
+                  Last Log Off: {this.state.playerSummary.lastlogoff}
+                  <br></br>
+                  Profile Created: {this.state.playerSummary.timecreated}
+                </Card.Text>
+              </Card.Body>
+              </Card>
+            </Col>
+            <Col>
+              <p>Friends List</p>
+            </Col>
+          </Row>
+        </Container>
       </div>
     );
   }
