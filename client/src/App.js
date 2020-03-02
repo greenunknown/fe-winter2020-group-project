@@ -133,7 +133,7 @@ class App extends Component{
           </Row>
           <Row>
             <Col md lg="4">
-                <p>Recently Played</p>
+                <h2>Recently Played</h2>
                 <div>
                   {recentlyPlayed.games.map((game, i, j, k) => {
                     return (
@@ -145,11 +145,6 @@ class App extends Component{
                             <Card.Link href={"https://store.steampowered.com/app/" + game.appid + "/"}>Steam Store Page</Card.Link>
                           </Card.Body>
                         </Card>
-                        {/* <p>
-                          Game: {game.name}
-                        </p> */}
-                        {/* console.log({"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"})
-                        <img scr={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"} alt="game logo" />  */}
                       </div>
                     )
                   })}
