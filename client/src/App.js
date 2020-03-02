@@ -9,6 +9,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
+
 class App extends Component{
   state = {
     playerSummary: {
@@ -103,16 +104,16 @@ class App extends Component{
           <Row>
             <Col md lg="4">
               <Card >
-              <Card.Img variant="top" src={this.state.playerSummary.avatarfull} />
-              <Card.Body>
-                <Card.Title>{this.state.playerSummary.personaname}</Card.Title>
-                <Card.Link href={this.state.playerSummary.profileurl}>Steam Profile</Card.Link>
-                <Card.Text>
-                  Last Log Off: {timeConverter(this.state.playerSummary.lastlogoff)}
-                  <br></br>
-                  Profile Created: {timeConverter(this.state.playerSummary.timecreated)}
-                </Card.Text>
-              </Card.Body>
+                <Card.Img variant="top" src={this.state.playerSummary.avatarfull} />
+                <Card.Body>
+                  <Card.Title>{this.state.playerSummary.personaname}</Card.Title>
+                  <Card.Link href={this.state.playerSummary.profileurl}>Steam Profile</Card.Link>
+                  <Card.Text>
+                    Last Log Off: {timeConverter(this.state.playerSummary.lastlogoff)}
+                    <br></br>
+                    Profile Created: {timeConverter(this.state.playerSummary.timecreated)}
+                  </Card.Text>
+                </Card.Body>
               </Card>
             </Col>
             <Col>
@@ -131,21 +132,24 @@ class App extends Component{
             </Col>
           </Row>
           <Row>
-            <Col>
+            <Col md lg="4">
                 <p>Recently Played</p>
                 <div>
                   {recentlyPlayed.games.map((game, i, j, k) => {
                     return (
                       <div key={i}>
-                        <p>
+                        <Card >
+                          <Card.Img variant="top" src={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"} />
+                          <Card.Body>
+                            <Card.Title>{game.name}</Card.Title>
+                            <Card.Link href={"https://store.steampowered.com/app/" + game.appid + "/"}>Steam Store Page</Card.Link>
+                          </Card.Body>
+                        </Card>
+                        {/* <p>
                           Game: {game.name}
-                          <br></br>
-                          {/* http://media.steampowered.com/steamcommunity/public/images/apps/APPID/IMG_ICON_URL.jpg
-                          http://media.steampowered.com/steamcommunity/public/images/apps/APPID/IMG_LOGO_URL.jpg */}
-                        </p>
-                        console.log({"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"})
-                        <img alt="game logo" scr={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"}/> 
-                          
+                        </p> */}
+                        {/* console.log({"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"})
+                        <img scr={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"} alt="game logo" />  */}
                       </div>
                     )
                   })}
