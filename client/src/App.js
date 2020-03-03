@@ -53,8 +53,18 @@ class App extends Component{
       var dataJSON = JSON.parse(data);
       this.setState({playerSummary: dataJSON[0].response.players[0]})
       this.setState({friendsList: dataJSON[1].friendslist.friends});
-      this.setState({recentlyPlayed: dataJSON[2].response});
-      this.setState({ownedGames: dataJSON[3].response});
+      
+      if (Object.keys(dataJSON[2].response).length === 0) {
+        this.setState({recentlyPlayed: {total_count: 0, games: []}});
+      } else {
+        this.setState({recentlyPlayed: dataJSON[2].response});
+      }
+
+      if (Object.keys(dataJSON[3].response).length === 0) {
+        this.setState({recentlyPlayed: {game_count: 0, games: []}});
+      } else {
+        this.setState({ownedGames: dataJSON[3].response});
+      }
       this.setState({gamesList: dataJSON[4].applist.apps});
 
       console.log(this.state.playerSummary);
@@ -73,6 +83,11 @@ class App extends Component{
     // Time converter function by shomrat from: https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
     // Retrieved on 3-2-20
     function timeConverter(UNIX_timestamp){
+      if(UNIX_timestamp === 0) {
+        return '';
+      } else if (typeof UNIX_timestamp === 'undefined') {
+        return "Long, long time ago";
+      }
       var a = new Date(UNIX_timestamp * 1000);
       var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       var year = a.getFullYear();
