@@ -50,27 +50,32 @@ class App extends Component{
       body: JSON.stringify({ userId: this.state.userid }),
     });
       const data = await response.text();
-      var dataJSON = JSON.parse(data);
-      this.setState({playerSummary: dataJSON[0].response.players[0]})
-      this.setState({friendsList: dataJSON[1].friendslist.friends});
-      
-      if (Object.keys(dataJSON[2].response).length === 0) {
-        this.setState({recentlyPlayed: {total_count: 0, games: []}});
-      } else {
-        this.setState({recentlyPlayed: dataJSON[2].response});
-      }
+      if(data !== "No match") 
+      {
+        var dataJSON = JSON.parse(data);
+        this.setState({playerSummary: dataJSON[0].response.players[0]})
+        this.setState({friendsList: dataJSON[1].friendslist.friends});
+        
+        if (Object.keys(dataJSON[2].response).length === 0) {
+          this.setState({recentlyPlayed: {total_count: 0, games: []}});
+        } else {
+          this.setState({recentlyPlayed: dataJSON[2].response});
+        }
 
-      if (Object.keys(dataJSON[3].response).length === 0) {
-        this.setState({recentlyPlayed: {game_count: 0, games: []}});
-      } else {
-        this.setState({ownedGames: dataJSON[3].response});
-      }
-      this.setState({gamesList: dataJSON[4].applist.apps});
+        if (Object.keys(dataJSON[3].response).length === 0) {
+          this.setState({recentlyPlayed: {game_count: 0, games: []}});
+        } else {
+          this.setState({ownedGames: dataJSON[3].response});
+        }
+        this.setState({gamesList: dataJSON[4].applist.apps});
 
-      console.log(this.state.playerSummary);
-      console.log(this.state.friendsList);
-      console.log(this.state.recentlyPlayed);
-      console.log(this.state.ownedGames);
+        console.log(this.state.playerSummary);
+        console.log(this.state.friendsList);
+        console.log(this.state.recentlyPlayed);
+        console.log(this.state.ownedGames);
+      } else {
+        console.log("No match found!");
+      }    
   };
 
   handleSubmit(event) {
