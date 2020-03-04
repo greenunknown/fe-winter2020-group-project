@@ -182,7 +182,7 @@ class App extends Component{
               </Card>
             </Col>
             <Col>
-              <p>Friends List</p>
+              <h2>Friends List</h2>
               <div>
                 {/* <FriendSummary friendsSummary={friendsSummary}/> */}
                 {friendsSummary.map((friend, i) => {
