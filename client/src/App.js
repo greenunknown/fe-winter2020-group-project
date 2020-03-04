@@ -56,26 +56,45 @@ class App extends Component{
         this.setState({playerSummary: dataJSON[0].response.players[0]})
         this.setState({friendsList: dataJSON[1].friendslist.friends});
         
-        if (Object.keys(dataJSON[2].response).length === 0) {
-          this.setState({recentlyPlayed: {total_count: 0, games: []}});
-        } else {
+        // if (Object.keys(dataJSON[2].response).length === 0) {
+        //   this.setState({recentlyPlayed: {total_count: 0, games: []}});
+        // } else {
           this.setState({recentlyPlayed: dataJSON[2].response});
-        }
+        // }
 
-        if (Object.keys(dataJSON[3].response).length === 0) {
-          this.setState({recentlyPlayed: {game_count: 0, games: []}});
-        } else {
+        // if (Object.keys(dataJSON[3].response).length === 0) {
+        //   this.setState({recentlyPlayed: {game_count: 0, games: []}});
+        // } else {
           this.setState({ownedGames: dataJSON[3].response});
-        }
+        // }
         this.setState({gamesList: dataJSON[4].applist.apps});
 
-        console.log(this.state.playerSummary);
-        console.log(this.state.friendsList);
-        console.log(this.state.recentlyPlayed);
-        console.log(this.state.ownedGames);
+        // console.log(this.state.playerSummary);
+        // console.log(this.state.friendsList);
+        // console.log(this.state.recentlyPlayed);
+        // console.log(this.state.ownedGames);
       } else {
         console.log("No match found!");
+        this.setState({playerSummary: {
+          steamid: "",
+          personaname: "",
+          profileurl: "#",
+          avatar: "",
+          avatarmedium: "",
+          avatarfull: "",
+          lastlogoff: 0,
+          timecreated: 0
+        }});
+        this.setState({friendsList: []});
+        this.setState({recentlyPlayed: {total_count: 0, games: []}});
+        this.setState({ownedGames: {game_count: 0, games: []}});
+        this.setState({gamesList: []});
       }    
+
+      console.log(this.state.playerSummary);
+      console.log(this.state.friendsList);
+      console.log(this.state.recentlyPlayed);
+      console.log(this.state.ownedGames);
   };
 
   handleSubmit(event) {
