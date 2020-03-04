@@ -11,6 +11,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
 
 class App extends Component{
+  // The state for the app contains data for a player. This data 
   state = {
     playerSummary: {
       steamid: "",
@@ -22,13 +23,19 @@ class App extends Component{
       lastlogoff: 0,
       timecreated: 0
     },
-    friendsList: [
-      // {
-      //   steamdid: "",
-      //   relationship: "",
-      //   friend_since: 0
-      // }
+    friendsSummary: [
+      {
+        steamid: "",
+        personaname: "",
+        profileurl: "#",
+        avatar: "",
+        avatarmedium: "",
+        avatarfull: "",
+        lastlogoff: 0,
+        timecreated: 0
+      }
     ],
+    friendsList: [],
     recentlyPlayed: {
       total_count: 0,
       games: []
@@ -55,37 +62,37 @@ class App extends Component{
         var dataJSON = JSON.parse(data);
         this.setState({playerSummary: dataJSON[0].response.players[0]})
         this.setState({friendsList: dataJSON[1].friendslist.friends});
-        
-        // if (Object.keys(dataJSON[2].response).length === 0) {
-        //   this.setState({recentlyPlayed: {total_count: 0, games: []}});
-        // } else {
-          this.setState({recentlyPlayed: dataJSON[2].response});
-        // }
-
-        // if (Object.keys(dataJSON[3].response).length === 0) {
-        //   this.setState({recentlyPlayed: {game_count: 0, games: []}});
-        // } else {
-          this.setState({ownedGames: dataJSON[3].response});
-        // }
-        this.setState({gamesList: dataJSON[4].applist.apps});
-
-        // console.log(this.state.playerSummary);
-        // console.log(this.state.friendsList);
-        // console.log(this.state.recentlyPlayed);
-        // console.log(this.state.ownedGames);
+        this.setState({friendsSummary: dataJSON[2].response.players})
+        this.setState({recentlyPlayed: dataJSON[3].response});
+        this.setState({ownedGames: dataJSON[4].response});
+        this.setState({gamesList: dataJSON[5].applist.apps});
       } else {
         console.log("No match found!");
-        this.setState({playerSummary: {
-          steamid: "",
-          personaname: "",
-          profileurl: "#",
-          avatar: "",
-          avatarmedium: "",
-          avatarfull: "",
-          lastlogoff: 0,
-          timecreated: 0
-        }});
+        this.setState({playerSummary: [
+          {
+            steamid: "",
+            personaname: "",
+            profileurl: "#",
+            avatar: "",
+            avatarmedium: "",
+            avatarfull: "",
+            lastlogoff: 0,
+            timecreated: 0
+          }
+        ]});
         this.setState({friendsList: []});
+        this.setState({friendsSummary: [
+          {
+            steamid: "",
+            personaname: "",
+            profileurl: "#",
+            avatar: "",
+            avatarmedium: "",
+            avatarfull: "",
+            lastlogoff: 0,
+            timecreated: 0
+          }
+        ]});
         this.setState({recentlyPlayed: {total_count: 0, games: []}});
         this.setState({ownedGames: {game_count: 0, games: []}});
         this.setState({gamesList: []});
@@ -93,6 +100,7 @@ class App extends Component{
 
       console.log(this.state.playerSummary);
       console.log(this.state.friendsList);
+      console.log(this.state.friendsSummary);
       console.log(this.state.recentlyPlayed);
       console.log(this.state.ownedGames);
   };
@@ -102,7 +110,7 @@ class App extends Component{
   };
 
   render() {
-    const {friendsList, recentlyPlayed} = this.state;
+    const {friendsList, recentlyPlayed, playerSummary} = this.state;
 
     // Time converter function by shomrat from: https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
     // Retrieved on 3-2-20
@@ -143,14 +151,14 @@ class App extends Component{
           <Row>
             <Col md lg="4">
               <Card >
-                <Card.Img variant="top" src={this.state.playerSummary.avatarfull} />
+                <Card.Img variant="top" src={playerSummary.avatarfull} />
                 <Card.Body>
-                  <Card.Title>{this.state.playerSummary.personaname}</Card.Title>
-                  <Card.Link href={this.state.playerSummary.profileurl}>Steam Profile</Card.Link>
+                  <Card.Title>{playerSummary.personaname}</Card.Title>
+                  <Card.Link href={playerSummary.profileurl}>Steam Profile</Card.Link>
                   <Card.Text>
-                    Last Log Off: {timeConverter(this.state.playerSummary.lastlogoff)}
+                    Last Log Off: {timeConverter(playerSummary.lastlogoff)}
                     <br></br>
-                    Profile Created: {timeConverter(this.state.playerSummary.timecreated)}
+                    Profile Created: {timeConverter(playerSummary.timecreated)}
                   </Card.Text>
                 </Card.Body>
               </Card>
