@@ -110,7 +110,7 @@ class App extends Component{
   };
 
   render() {
-    const {friendsList, recentlyPlayed, playerSummary} = this.state;
+    const {friendsList, recentlyPlayed, playerSummary, friendsSummary} = this.state;
 
     // Time converter function by shomrat from: https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
     // Retrieved on 3-2-20
@@ -132,6 +132,24 @@ class App extends Component{
       return time;
     }
 
+    function FriendSummary(props) {
+      const friendsSummary = props.friendsSummary;
+      if(friendsSummary[0].steamid !== "")
+      {
+        friendsSummary.map((friend, i) => {
+          return (
+            <React.Fragment>
+              <p key={i}>
+                Friend Summary: {friend.personaname}
+              </p>
+              <img alt="friend profile" src={friend.avatar}/>
+            </React.Fragment>
+          )
+        });
+      } else {
+        return(null);
+      }
+    }
     return (
       <div>
         <Container>
@@ -166,6 +184,17 @@ class App extends Component{
             <Col>
               <p>Friends List</p>
               <div>
+                {/* <FriendSummary friendsSummary={friendsSummary}/> */}
+                {friendsSummary.map((friend, i) => {
+                  return (
+                    <React.Fragment>
+                      <p key={i}>
+                        Friend Summary: {friend.personaname}
+                      </p>
+                      <img alt="friend profile" src={friend.avatar}/>
+                    </React.Fragment>
+                  )
+                  })}
                 {friendsList.map((friend, i) => {
                   return (
                     <p key={i}>

@@ -16,30 +16,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 let corsOptions = {};
 app.use(cors());
 
-
-
 app.post('/search', (req, res) => {
     let steamName = req.body.userId;
     
     getSteamId(steamName, res);
 });
 
-function putUserInFront(str, arr) {
-    if(arr[0].steamid === str)
-    {
-        return arr;
-    } else {
-        for(let i = 0; i < arr.length; i++) {
-            if(arr[i].steamid === str)
-            {
-                let temp = arr[i]; // User summary
-                arr[i] = arr[0];
-                arr[0] = temp;
-                return arr;
-            }
-        }
-    }
-}
 // Get the user's steam id and if successful, their data and send it to the frontend.
 async function getSteamId(usersteamname, response) {
     let obj = await getJSON('http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key='+ key +'&vanityurl=' + usersteamname)
@@ -49,7 +31,7 @@ async function getSteamId(usersteamname, response) {
         console.log("usersteamid:", usersteamid);
 
         // Get the player's profile summary information.
-        let playerSum = await getJSON('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='+ key +'&steamids=' + steamids);
+        let playerSum = await getJSON('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='+ key +'&steamids=' + usersteamid);
         console.log("playerSum:", playerSum);
 
         // Get the player's friends list
@@ -68,22 +50,26 @@ async function getSteamId(usersteamname, response) {
             }
         }
         console.log(steamids);
-
         let friendsSum = await getJSON('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='+ key +'&steamids=' + steamids);
         console.log("friendsSum:", friendsSum);
 
+        // Get the player's recently played games
         let recentlyPlayed = await getJSON('http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key='+ key +'&steamid=' + usersteamid);
         console.log("recentlyPlayed:", recentlyPlayed);
 
+        // Get the player's owned games
         let ownedGames = await getJSON('http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key='+ key + '&steamid=' + usersteamid);
         console.log("ownedGames:", ownedGames);
 
+        // Get the list of all games on steam
         let gameslist = await getJSON('http://api.steampowered.com/ISteamApps/GetAppList/v2');
         console.log("gameslist:", gameslist);
 
+        // Package and send the data
         let data = [playerSum, friends, friendsSum, recentlyPlayed, ownedGames, gameslist];
         response.send(data);
     } else {
+        // If there was no match for the given usersteamid, return 'No match' to the front end.
         let data = "No match";
         response.send(data);
     }
