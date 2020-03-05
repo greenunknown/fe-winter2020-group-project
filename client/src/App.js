@@ -9,6 +9,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
+import Accordion from 'react-bootstrap/Accordion';
 import {Bar, Scatter, Linke, Pie} from 'react-chartjs-2';
 
 class App extends Component{
@@ -75,8 +76,18 @@ class App extends Component{
         this.setState({playerSummary: dataJSON[0].response.players[0]})
         this.setState({friendsList: dataJSON[1].friendslist.friends});
         this.setState({friendsSummary: dataJSON[2].response.players})
-        this.setState({recentlyPlayed: dataJSON[3].response});
-        this.setState({ownedGames: dataJSON[4].response});
+        // this.setState({recentlyPlayed: dataJSON[3].response});
+        if (Object.keys(dataJSON[3].response).length === 0) {
+          this.setState({recentlyPlayed: {total_count: 0, games: []}});
+        } else {
+          this.setState({recentlyPlayed: dataJSON[3].response});
+        }
+        // this.setState({ownedGames: dataJSON[4].response});
+        if (Object.keys(dataJSON[4].response).length === 0) {
+          this.setState({recentlyPlayed: {game_count: 0, games: []}});
+        } else {
+          this.setState({ownedGames: dataJSON[4].response});
+        }
         this.setState({gamesList: dataJSON[5].applist.apps});
         if(dataJSON[6] === {success: 2})
         {
@@ -201,7 +212,7 @@ class App extends Component{
           </Row>
           <Row>
             <Col md lg="4">
-              <Card >
+              <Card>
                 <Card.Img variant="top" src={playerSummary.avatarfull} />
                 <Card.Body>
                   <Card.Title>{playerSummary.personaname}</Card.Title>
@@ -218,25 +229,51 @@ class App extends Component{
               <h2>Friends List</h2>
               <div>
                 {/* <FriendSummary friendsSummary={friendsSummary}/> */}
-                {friendsSummary.map((friend, i) => {
-                  return (
-                    <React.Fragment key={i}>
-                      <p>
-                        Friend Summary: {friend.personaname}
-                      </p>
-                      <img alt="friend profile" src={friend.avatar}/>
-                    </React.Fragment>
-                  )
-                  })}
-                {friendsList.map((friend, i) => {
-                  return (
-                    <p key={i}>
-                      Friend: {friend.steamid}
-                      <br></br>
-                      Friend since: {timeConverter(friend.friend_since)}
-                    </p>
-                    )
-                })}
+                <Accordion defaultActiveKey="0">
+                  <Card>
+                    <Card.Header>
+                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                        Friends
+                      </Accordion.Toggle>
+                    </Card.Header>
+                    <Accordion.Collapse eventKey="1">
+                      <Card.Body>
+                        {friendsSummary.map((friend, i) => {
+                          return (
+                            <React.Fragment key={i}>
+                              <p>
+                                Friend Summary: {friend.personaname}
+                              </p>
+                              <img alt="friend profile" src={friend.avatar}/>
+                            </React.Fragment>
+                          )
+                          })}
+                        </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                </Accordion>
+                <Accordion defaultActiveKey="0">
+                  <Card>
+                    <Card.Header>
+                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                        Friends
+                      </Accordion.Toggle>
+                    </Card.Header>
+                    <Accordion.Collapse eventKey="1">
+                      <Card.Body>
+                        {friendsList.map((friend, i) => {
+                          return (
+                            <p key={i}>
+                              Friend: {friend.steamid}
+                              <br></br>
+                              Friend since: {timeConverter(friend.friend_since)}
+                            </p>
+                            )
+                        })}
+                      </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                </Accordion>
               </div>
             </Col>
           </Row>
