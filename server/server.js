@@ -2,7 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const bent = require('bent');
-const getJSON = bent('json');
+const getJSON = bent('json', 200, 500);
 const app = express();
 const port = process.env.PORT || 5000;
 const fs = require('fs');
@@ -64,6 +64,21 @@ async function getSteamId(usersteamname, response) {
         // Get the list of all games on steam
         let gameslist = await getJSON('http://api.steampowered.com/ISteamApps/GetAppList/v2');
         console.log("gameslist:", gameslist);
+
+        // Get player's wishlist
+        let wishlist = {};
+        // try {
+            wishlist = await getJSON('https://store.steampowered.com/wishlist/profiles/' + usersteamid + '/wishlistdata/');
+            console.log("wishlist", wishlist);
+        // } catch (e) {
+        //     wishlist = {"response" : "private"};
+        //     console.log(e);
+        // }
+        
+
+        // Get player's badges
+        let badges = await getJSON('http://api.steampowered.com/IPlayerService/GetBadges/v1/?key=' + key + '&steamid=' + usersteamid);
+        console.log("badges", badges);
 
         // Package and send the data
         let data = [playerSum, friends, friendsSum, recentlyPlayed, ownedGames, gameslist];
