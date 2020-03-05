@@ -9,6 +9,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
+import {Bar, Scatter, Linke, Pie} from 'react-chartjs-2';
 
 class App extends Component{
   // The state for the app contains data for a player. This data 
@@ -46,7 +47,16 @@ class App extends Component{
     },
     gamesList: [],
     wishlist: {},
-    badges: []
+    badges: [],
+    labels: ['January', 'February', 'March',
+    'April', 'May'],
+    datasets: [
+      {
+        label: "Playtime",
+        backgroundColor: "rgba(0,123,255,1)",
+        data: [65, 59, 80, 81, 56]
+      }
+    ]
   };
  
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
@@ -163,6 +173,16 @@ class App extends Component{
         return(null);
       }
     }
+
+    function recentlyPlayedBar(props) {
+      let ls = props.labels;
+      let ds = props.dataset;
+      let rp = props.recentlyPlayed;
+      ls = rp.map((gamen) => {})
+
+
+    }
+
     return (
       <div>
         <Container>
@@ -224,7 +244,7 @@ class App extends Component{
             <Col md lg="4">
                 <h2>Recently Played</h2>
                 <React.Fragment>
-                  {recentlyPlayed.games.map((game, i, j, k) => {
+                  {recentlyPlayed.games.map((game, i) => {
                     return (
                       <div key={i}>
                         <Card >
@@ -238,6 +258,22 @@ class App extends Component{
                     )
                   })}
                 </React.Fragment>
+            </Col>
+            <Col>
+              <Bar
+                data={this.state}
+                options={{
+                  title:{
+                    display:true,
+                    text:'Recently Played Games',
+                    fontSize:20
+                  },
+                  legend:{
+                    display:true,
+                    position:'right'
+                  }
+                }}
+              />
             </Col>
           </Row>
         </Container>
