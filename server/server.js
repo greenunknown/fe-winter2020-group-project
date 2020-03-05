@@ -66,22 +66,15 @@ async function getSteamId(usersteamname, response) {
         console.log("gameslist:", gameslist);
 
         // Get player's wishlist
-        let wishlist = {};
-        // try {
-            wishlist = await getJSON('https://store.steampowered.com/wishlist/profiles/' + usersteamid + '/wishlistdata/');
-            console.log("wishlist", wishlist);
-        // } catch (e) {
-        //     wishlist = {"response" : "private"};
-        //     console.log(e);
-        // }
-        
+        let wishlist = await getJSON('https://store.steampowered.com/wishlist/profiles/' + usersteamid + '/wishlistdata/');
+        console.log("wishlist", wishlist);
 
         // Get player's badges
         let badges = await getJSON('http://api.steampowered.com/IPlayerService/GetBadges/v1/?key=' + key + '&steamid=' + usersteamid);
         console.log("badges", badges);
 
         // Package and send the data
-        let data = [playerSum, friends, friendsSum, recentlyPlayed, ownedGames, gameslist];
+        let data = [playerSum, friends, friendsSum, recentlyPlayed, ownedGames, gameslist, wishlist, badges];
         response.send(data);
     } else {
         // If there was no match for the given usersteamid, return 'No match' to the front end.

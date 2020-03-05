@@ -44,7 +44,9 @@ class App extends Component{
       game_count: 0,
       games: []
     },
-    gamesList: []
+    gamesList: [],
+    wishlist: {},
+    badges: []
   };
  
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
@@ -66,6 +68,13 @@ class App extends Component{
         this.setState({recentlyPlayed: dataJSON[3].response});
         this.setState({ownedGames: dataJSON[4].response});
         this.setState({gamesList: dataJSON[5].applist.apps});
+        if(dataJSON[6] === {success: 2})
+        {
+          this.setState({wishlist: {}});
+        } else {
+          this.setState({wishlist: dataJSON[6]});
+        }
+        this.setState({badges: dataJSON[7].response});
       } else {
         console.log("No match found!");
         this.setState({playerSummary: [
@@ -96,6 +105,8 @@ class App extends Component{
         this.setState({recentlyPlayed: {total_count: 0, games: []}});
         this.setState({ownedGames: {game_count: 0, games: []}});
         this.setState({gamesList: []});
+        this.setState({wishlist: {}});
+        this.setState({badges: []});
       }    
 
       console.log(this.state.playerSummary);
@@ -103,6 +114,8 @@ class App extends Component{
       console.log(this.state.friendsSummary);
       console.log(this.state.recentlyPlayed);
       console.log(this.state.ownedGames);
+      console.log(this.state.wishlist);
+      console.log(this.state.badges);
   };
 
   handleSubmit(event) {
@@ -172,7 +185,7 @@ class App extends Component{
                 <Card.Img variant="top" src={playerSummary.avatarfull} />
                 <Card.Body>
                   <Card.Title>{playerSummary.personaname}</Card.Title>
-                  <Card.Link href={playerSummary.profileurl}>Steam Profile</Card.Link>
+                  <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile</Card.Link>
                   <Card.Text>
                     Last Log Off: {timeConverter(playerSummary.lastlogoff)}
                     <br></br>
@@ -187,8 +200,8 @@ class App extends Component{
                 {/* <FriendSummary friendsSummary={friendsSummary}/> */}
                 {friendsSummary.map((friend, i) => {
                   return (
-                    <React.Fragment>
-                      <p key={i}>
+                    <React.Fragment key={i}>
+                      <p>
                         Friend Summary: {friend.personaname}
                       </p>
                       <img alt="friend profile" src={friend.avatar}/>
