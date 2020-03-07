@@ -9,8 +9,11 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
+import Accordion from 'react-bootstrap/Accordion';
+import {Bar, Scatter, Linke, Pie} from 'react-chartjs-2';
 
 class App extends Component{
+  // The state for the app contains data for a player. This data 
   state = {
     playerSummary: {
       steamid: "",
@@ -22,13 +25,19 @@ class App extends Component{
       lastlogoff: 0,
       timecreated: 0
     },
-    friendsList: [
-      // {
-      //   steamdid: "",
-      //   relationship: "",
-      //   friend_since: 0
-      // }
+    friendsSummary: [
+      {
+        steamid: "",
+        personaname: "",
+        profileurl: "#",
+        avatar: "",
+        avatarmedium: "",
+        avatarfull: "",
+        lastlogoff: 0,
+        timecreated: 0
+      }
     ],
+    friendsList: [],
     recentlyPlayed: {
       total_count: 0,
       games: []
@@ -37,7 +46,18 @@ class App extends Component{
       game_count: 0,
       games: []
     },
-    gamesList: []
+    gamesList: [],
+    wishlist: {},
+    badges: [],
+    labels: ['January', 'February', 'March',
+    'April', 'May'],
+    datasets: [
+      {
+        label: "Playtime",
+        backgroundColor: "rgba(0,123,255,1)",
+        data: [65, 59, 80, 81, 56]
+      }
+    ]
   };
  
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
@@ -50,27 +70,73 @@ class App extends Component{
       body: JSON.stringify({ userId: this.state.userid }),
     });
       const data = await response.text();
-      var dataJSON = JSON.parse(data);
-      this.setState({playerSummary: dataJSON[0].response.players[0]})
-      this.setState({friendsList: dataJSON[1].friendslist.friends});
-      
-      if (Object.keys(dataJSON[2].response).length === 0) {
+      if(data !== "No match") 
+      {
+        var dataJSON = JSON.parse(data);
+        this.setState({playerSummary: dataJSON[0].response.players[0]})
+        this.setState({friendsList: dataJSON[1].friendslist.friends});
+        this.setState({friendsSummary: dataJSON[2].response.players})
+        // this.setState({recentlyPlayed: dataJSON[3].response});
+        if (Object.keys(dataJSON[3].response).length === 0) {
+          this.setState({recentlyPlayed: {total_count: 0, games: []}});
+        } else {
+          this.setState({recentlyPlayed: dataJSON[3].response});
+        }
+        // this.setState({ownedGames: dataJSON[4].response});
+        if (Object.keys(dataJSON[4].response).length === 0) {
+          this.setState({recentlyPlayed: {game_count: 0, games: []}});
+        } else {
+          this.setState({ownedGames: dataJSON[4].response});
+        }
+        this.setState({gamesList: dataJSON[5].applist.apps});
+        if(dataJSON[6] === {success: 2})
+        {
+          this.setState({wishlist: {}});
+        } else {
+          this.setState({wishlist: dataJSON[6]});
+        }
+        this.setState({badges: dataJSON[7].response});
+      } else {
+        console.log("No match found!");
+        this.setState({playerSummary: [
+          {
+            steamid: "",
+            personaname: "",
+            profileurl: "#",
+            avatar: "",
+            avatarmedium: "",
+            avatarfull: "",
+            lastlogoff: 0,
+            timecreated: 0
+          }
+        ]});
+        this.setState({friendsList: []});
+        this.setState({friendsSummary: [
+          {
+            steamid: "",
+            personaname: "",
+            profileurl: "#",
+            avatar: "",
+            avatarmedium: "",
+            avatarfull: "",
+            lastlogoff: 0,
+            timecreated: 0
+          }
+        ]});
         this.setState({recentlyPlayed: {total_count: 0, games: []}});
-      } else {
-        this.setState({recentlyPlayed: dataJSON[2].response});
-      }
-
-      if (Object.keys(dataJSON[3].response).length === 0) {
-        this.setState({recentlyPlayed: {game_count: 0, games: []}});
-      } else {
-        this.setState({ownedGames: dataJSON[3].response});
-      }
-      this.setState({gamesList: dataJSON[4].applist.apps});
+        this.setState({ownedGames: {game_count: 0, games: []}});
+        this.setState({gamesList: []});
+        this.setState({wishlist: {}});
+        this.setState({badges: []});
+      }    
 
       console.log(this.state.playerSummary);
       console.log(this.state.friendsList);
+      console.log(this.state.friendsSummary);
       console.log(this.state.recentlyPlayed);
       console.log(this.state.ownedGames);
+      console.log(this.state.wishlist);
+      console.log(this.state.badges);
   };
 
   handleSubmit(event) {
@@ -78,7 +144,7 @@ class App extends Component{
   };
 
   render() {
-    const {friendsList, recentlyPlayed} = this.state;
+    const {friendsList, recentlyPlayed, playerSummary, friendsSummary} = this.state;
 
     // Time converter function by shomrat from: https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
     // Retrieved on 3-2-20
@@ -100,6 +166,34 @@ class App extends Component{
       return time;
     }
 
+    function FriendSummary(props) {
+      const friendsSummary = props.friendsSummary;
+      if(friendsSummary[0].steamid !== "")
+      {
+        friendsSummary.map((friend, i) => {
+          return (
+            <React.Fragment>
+              <p key={i}>
+                Friend Summary: {friend.personaname}
+              </p>
+              <img alt="friend profile" src={friend.avatar}/>
+            </React.Fragment>
+          )
+        });
+      } else {
+        return(null);
+      }
+    }
+
+    function recentlyPlayedBar(props) {
+      let ls = props.labels;
+      let ds = props.dataset;
+      let rp = props.recentlyPlayed;
+      ls = rp.map((gamen) => {})
+
+
+    }
+
     return (
       <div>
         <Container>
@@ -118,31 +212,68 @@ class App extends Component{
           </Row>
           <Row>
             <Col md lg="4">
-              <Card >
-                <Card.Img variant="top" src={this.state.playerSummary.avatarfull} />
+              <Card>
+                <Card.Img variant="top" src={playerSummary.avatarfull} />
                 <Card.Body>
-                  <Card.Title>{this.state.playerSummary.personaname}</Card.Title>
-                  <Card.Link href={this.state.playerSummary.profileurl}>Steam Profile</Card.Link>
+                  <Card.Title>{playerSummary.personaname}</Card.Title>
+                  <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile</Card.Link>
                   <Card.Text>
-                    Last Log Off: {timeConverter(this.state.playerSummary.lastlogoff)}
+                    Last Log Off: {timeConverter(playerSummary.lastlogoff)}
                     <br></br>
-                    Profile Created: {timeConverter(this.state.playerSummary.timecreated)}
+                    Profile Created: {timeConverter(playerSummary.timecreated)}
                   </Card.Text>
                 </Card.Body>
               </Card>
             </Col>
             <Col>
-              <p>Friends List</p>
+              <h2>Friends List</h2>
               <div>
-                {friendsList.map((friend, i) => {
-                  return (
-                    <p key={i}>
-                      Friend: {friend.steamid}
-                      <br></br>
-                      Friend since: {timeConverter(friend.friend_since)}
-                    </p>
-                    )
-                })}
+                {/* <FriendSummary friendsSummary={friendsSummary}/> */}
+                <Accordion defaultActiveKey="0">
+                  <Card>
+                    <Card.Header>
+                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                        Friends
+                      </Accordion.Toggle>
+                    </Card.Header>
+                    <Accordion.Collapse eventKey="1">
+                      <Card.Body>
+                        {friendsSummary.map((friend, i) => {
+                          return (
+                            <React.Fragment key={i}>
+                              <p>
+                                Friend Summary: {friend.personaname}
+                              </p>
+                              <img alt="friend profile" src={friend.avatar}/>
+                            </React.Fragment>
+                          )
+                          })}
+                        </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                </Accordion>
+                <Accordion defaultActiveKey="0">
+                  <Card>
+                    <Card.Header>
+                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                        Friends
+                      </Accordion.Toggle>
+                    </Card.Header>
+                    <Accordion.Collapse eventKey="1">
+                      <Card.Body>
+                        {friendsList.map((friend, i) => {
+                          return (
+                            <p key={i}>
+                              Friend: {friend.steamid}
+                              <br></br>
+                              Friend since: {timeConverter(friend.friend_since)}
+                            </p>
+                            )
+                        })}
+                      </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                </Accordion>
               </div>
             </Col>
           </Row>
@@ -150,7 +281,7 @@ class App extends Component{
             <Col md lg="4">
                 <h2>Recently Played</h2>
                 <React.Fragment>
-                  {recentlyPlayed.games.map((game, i, j, k) => {
+                  {recentlyPlayed.games.map((game, i) => {
                     return (
                       <div key={i}>
                         <Card >
@@ -164,6 +295,22 @@ class App extends Component{
                     )
                   })}
                 </React.Fragment>
+            </Col>
+            <Col>
+              <Bar
+                data={this.state}
+                options={{
+                  title:{
+                    display:true,
+                    text:'Recently Played Games',
+                    fontSize:20
+                  },
+                  legend:{
+                    display:true,
+                    position:'right'
+                  }
+                }}
+              />
             </Col>
           </Row>
         </Container>
