@@ -137,6 +137,7 @@ class App extends Component{
       console.log(this.state.ownedGames);
       console.log(this.state.wishlist);
       console.log(this.state.badges);
+      console.log(this.state.gamesList);
   };
 
   handleSubmit(event) {
@@ -297,12 +298,49 @@ class App extends Component{
                 </React.Fragment>
             </Col>
             <Col>
+              {/* {console.log(this.state.recentlyPlayed.games.map(game => game.name))} */}
               <Bar
-                data={this.state}
+                data={
+                  {
+                    labels: this.state.recentlyPlayed.games.map(game => game.name),
+                    datasets: [
+                      {
+                        label: "Playtime (Minutes)",
+                        backgroundColor: "rgba(0,123,255,1)",
+                        data: this.state.recentlyPlayed.games.map((game) => game.playtime_2weeks)
+                      }
+                    ]
+                  }
+                }
                 options={{
                   title:{
                     display:true,
                     text:'Recently Played Games',
+                    fontSize:20
+                  },
+                  legend:{
+                    display:true,
+                    position:'right'
+                  }
+                }}
+              />
+              <Bar
+                data={
+                  {
+                    labels: this.state.ownedGames.games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).map(game => game.appid),
+                    datasets: [
+                      {
+                        label: "Playtime (Minutes)",
+                        backgroundColor: "rgba(0,123,255,1)",
+                        data: this.state.ownedGames.games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).map((game) => game.playtime_forever)
+                      }
+                    ]
+                  }
+                }
+                options={{
+                  title:{
+                    display:true,
+                    text:'Owned Games Playtime',
                     fontSize:20
                   },
                   legend:{
