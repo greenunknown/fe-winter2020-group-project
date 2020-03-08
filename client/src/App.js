@@ -11,6 +11,12 @@ import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
 import {Bar, Scatter, Linke, Pie} from 'react-chartjs-2';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import ClipLoader from "react-spinners/ClipLoader";
+
+import './style.css';
+
 
 class App extends Component{
   // The state for the app contains data for a player. This data 
@@ -57,11 +63,40 @@ class App extends Component{
         backgroundColor: "rgba(0,123,255,1)",
         data: [65, 59, 80, 81, 56]
       }
-    ]
+    ],
+    landingPage: false,
+    loading: false,
+    matchFound: false
   };
+
+  shrinkSearchBar() {
+    var searchDiv = document.getElementById("searchBarDiv");   
+    var searchBar = document.getElementById("searchBar");
+    var title = document.getElementById("titleHeader");
+
+    searchDiv.style.width= "30%";
+    searchDiv.style.padding = "0px";
+    searchDiv.style.margin = "0px";
+    searchDiv.style.marginBottom = "50px";
+    
+    searchDiv.style.height= "10%";
+    searchDiv.style.textAlign = "left";
+
+    searchBar.style.height = "10";
+    title.style.margin = "5px";
+    title.style.fontSize = "20px";
+    // title.style.margin = "30px";
+  }
+
+
  
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
   callBackendAPI = async () => {
+    this.setState({loading: true});
+    if(!this.landingPage) {
+      this.shrinkSearchBar();
+    }
+
     const response = await fetch('http://localhost:5000/search', {
       method: 'POST',
       headers: {
@@ -72,6 +107,7 @@ class App extends Component{
       const data = await response.text();
       if(data !== "No match") 
       {
+        this.setState({matchFound: true});
         var dataJSON = JSON.parse(data);
         this.setState({playerSummary: dataJSON[0].response.players[0]})
         this.setState({friendsList: dataJSON[1].friendslist.friends});
@@ -97,6 +133,7 @@ class App extends Component{
         }
         this.setState({badges: dataJSON[7].response});
       } else {
+        this.setState({matchFound: false});
         console.log("No match found!");
         this.setState({playerSummary: [
           {
@@ -128,7 +165,14 @@ class App extends Component{
         this.setState({gamesList: []});
         this.setState({wishlist: {}});
         this.setState({badges: []});
-      }    
+      }
+      
+      this.setState({loading: false});
+      var mainDiv = document.getElementById("mainDiv");
+      
+      
+      mainDiv.style.display = "block";
+     
 
       console.log(this.state.playerSummary);
       console.log(this.state.friendsList);
@@ -144,6 +188,7 @@ class App extends Component{
   };
 
   render() {
+    
     const {friendsList, recentlyPlayed, playerSummary, friendsSummary} = this.state;
 
     // Time converter function by shomrat from: https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
@@ -190,26 +235,28 @@ class App extends Component{
       let ds = props.dataset;
       let rp = props.recentlyPlayed;
       ls = rp.map((gamen) => {})
-
-
     }
 
+  
+
     return (
-      <div>
         <Container>
-          <h1>Steam Dash</h1>
-          <Row>
-            <Col md lg="4">
+          <div className = "searchBarDiv" id="searchBarDiv">
+        
+            <h1 className="titleHeader" id="titleHeader">Steam Dash</h1>            
               <Form onSubmit={this.handleSubmit}>
                   <InputGroup className="mb-1">
-                    <FormControl placeholder="Steam Username" aria-label="Steam Username" onChange={e => this.setState({ userid: e.target.value })}/>
+                    <FormControl className="searchBar" id="searchBar" placeholder="Steam Username" aria-label="Steam Username" onChange={e => this.setState({ userid: e.target.value })}/>
                     <InputGroup.Append>
-                      <Button type="Submit" value="Submit" onClick={this.callBackendAPI} readOnly>Submit</Button>
+                      <Button className="searchButton" type="Submit" value="Submit" variant="light" onClick={this.callBackendAPI} readOnly><FontAwesomeIcon icon={faSearch} color="black" /></Button>
                     </InputGroup.Append>
                   </InputGroup>
               </Form>
-            </Col>
-          </Row>
+              <ClipLoader size={100} color={"#555555"} loading={this.state.loading}/>
+          </div>
+
+          <div className="mainDiv" id="mainDiv">
+       
           <Row>
             <Col md lg="4">
               <Card>
@@ -225,78 +272,42 @@ class App extends Component{
                 </Card.Body>
               </Card>
             </Col>
-            <Col>
-              <h2>Friends List</h2>
-              <div>
+            <Col md lg="4"></Col>
+            <Col md lg="4" >
                 {/* <FriendSummary friendsSummary={friendsSummary}/> */}
-                <Accordion defaultActiveKey="0">
-                  <Card>
-                    <Card.Header>
-                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                        Friends
-                      </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="1">
-                      <Card.Body>
+                <h3>Friends list</h3>
+                        <ul class="friendsList">
                         {friendsSummary.map((friend, i) => {
                           return (
-                            <React.Fragment key={i}>
-                              <p>
-                                Friend Summary: {friend.personaname}
-                              </p>
-                              <img alt="friend profile" src={friend.avatar}/>
-                            </React.Fragment>
+                              <li className="friendCell">
+                              <img className="friendImg" alt="friend profile" src={friend.avatar}/>
+                              <a href={friend.profileurl}>{friend.personaname}</a>
+                              
+                              </li>
                           )
-                          })}
-                        </Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                </Accordion>
-                <Accordion defaultActiveKey="0">
-                  <Card>
-                    <Card.Header>
-                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                        Friends
-                      </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="1">
-                      <Card.Body>
-                        {friendsList.map((friend, i) => {
-                          return (
-                            <p key={i}>
-                              Friend: {friend.steamid}
-                              <br></br>
-                              Friend since: {timeConverter(friend.friend_since)}
-                            </p>
-                            )
                         })}
-                      </Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                </Accordion>
-              </div>
+                        </ul>
             </Col>
           </Row>
           <Row>
-            <Col md lg="4">
+            <Col md lg="12" className="recentDiv">
                 <h2>Recently Played</h2>
                 <React.Fragment>
                   {recentlyPlayed.games.map((game, i) => {
                     return (
-                      <div key={i}>
-                        <Card >
-                          <Card.Img variant="top" src={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"} />
-                          <Card.Body>
-                            <Card.Title>{game.name}</Card.Title>
-                            <Card.Link href={"https://store.steampowered.com/app/" + game.appid + "/"} target="_blank">Steam Store Page</Card.Link>
-                          </Card.Body>
-                        </Card>
-                      </div>
+                      <Card className="recentGameCards">
+                      <Card.Img variant="top" src={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"} />
+                      <Card.Body>
+                        <Card.Title>{game.name}</Card.Title>
+                        <Card.Link href={"https://store.steampowered.com/app/" + game.appid + "/"} target="_blank">Steam Store Page</Card.Link>                      
+                      </Card.Body>
+                    </Card>
                     )
                   })}
                 </React.Fragment>
             </Col>
-            <Col>
+            
+            {/* <Col>
               <Bar
                 data={this.state}
                 options={{
@@ -311,10 +322,11 @@ class App extends Component{
                   }
                 }}
               />
-            </Col>
+            </Col> */}
           </Row>
+
+          </div>
         </Container>
-      </div>
     );
   }
 }

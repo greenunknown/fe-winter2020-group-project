@@ -1,0 +1,83 @@
+/* html {
+    height: 100%;
+} */
+
+body {
+    font-family: 'Oxygen', sans-serif;
+}
+
+#root {
+    height: 100%;
+}
+
+.container {
+    /* background-color: #eeeeee; */
+    margin: auto auto;
+    padding: 0;
+}
+
+.titleHeader {
+    /* color: #444444; */
+    font-size: 4em;
+    margin-top: 30px;
+    margin-bottom: 60px;
+    transition: all .5s linear;
+}
+
+.searchBarDiv {
+    width: 60%;
+    text-align: center;
+    margin: 0 auto;
+    /* padding: 150px 0; */
+    transition: all .5s linear;
+
+}
+
+
+.searchBar {
+    font-size: 1em;
+    padding: 30px 20px;
+}
+
+
+.searchButton {
+    border-color: #CED4DA;
+    border-left: 0;
+}
+
+.mainDiv {
+    display: none;
+}
+
+.friendsList {
+    overflow: auto;
+    height: 460px;
+    list-style-type: none;
+    border: #CED4DA solid 1px;
+    padding: 0px;
+}
+
+.friendCell {
+    padding: 10px 10px;
+}
+
+.friendImg {
+    padding: 5px 10px;
+}
+
+.recentDiv {
+    overflow: auto;
+    white-space: nowrap;
+
+}
+.row {
+    margin-bottom: 30px;
+}
+
+
+
+.recentGameCards {
+    display: inline-block;
+    width: 30rem;
+    margin: 0 10px;
+}
