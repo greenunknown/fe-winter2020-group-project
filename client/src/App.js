@@ -187,10 +187,14 @@ class App extends Component{
                   {friendsSummary.map((friend, i) => {
                     return (
                       <React.Fragment key={i}>
-                        <p>
-                          Friend Summary: {friend.personaname}
-                        </p>
-                        <img alt="friend profile" src={friend.avatar}/>
+                        <div style={{border: "5px solid #007bff", "border-radius": "12px"}}>
+                          <Image alt="friend profile" src={friend.avatarfull}/>
+                          <br></br>
+                          <a href={friend.profileurl} target="_blank" rel="noopener noreferrer">{friend.personaname}</a>
+                          <UserPersonaState personastate={friend.personastate}/>
+                        </div>
+                        
+                        <br></br>
                       </React.Fragment>
                     )
                     })}
@@ -199,16 +203,6 @@ class App extends Component{
             </Card>
           </Accordion>
         )
-        // friendsSummary.map((friend, i) => {
-        //   return (
-        //     <React.Fragment>
-        //       <p key={i}>
-        //         Friend Summary: {friend.personaname}
-        //       </p>
-        //       <img alt="friend profile" src={friend.avatar}/>
-        //     </React.Fragment>
-        //   )
-        // });
       } else {
         return(null);
       }
@@ -431,7 +425,7 @@ class App extends Component{
         return (
           <React.Fragment>
             <AccordionComponent header="Wishlist" body={
-              <ListGroup as="ul" style={{overflow: 'auto', height: '500px'}}>
+              <ListGroup as="ul" style={{overflow: 'auto', height: '500px'}} variant="flush">
               {
                   wishlist_games.map((game, i) => {
                     return(
@@ -486,77 +480,11 @@ class App extends Component{
           <Row>
             <Col md lg="4">
               <UserProfile playerSummary={this.state.playerSummary} badges={this.state.badges}/>
-              {/* <Card>
-                <Card.Img variant="top" src={playerSummary.avatarfull} />
-                <Card.Body>
-                  <Card.Title>{playerSummary.personaname}</Card.Title>
-                  <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile</Card.Link>
-                  <Card.Text>
-                    Last Log Off: {timeConverter(playerSummary.lastlogoff)}
-                    <br></br>
-                    Profile Created: {timeConverter(playerSummary.timecreated)}
-                    <br></br>
-                    Player Level: {this.state.badges.player_level}
-                    <br></br>
-                    Exp Progress: <ProgressBar now={(this.state.badges.player_xp / (this.state.badges.player_xp + this.state.badges.player_xp_needed_to_level_up))*100} 
-                      label={this.state.badges.player_xp_needed_to_level_up + "\tneeded to level up"}/>
-                  </Card.Text>
-                </Card.Body>
-              </Card> */}
             </Col>
-            <Col>
-              <h2>Friends List</h2>
+            <Col md lg="4">
               <FriendSummary playerSummary={this.state.playerSummary} friendsSummary={this.state.friendsSummary}/>
-              <React.Fragment>
-                {/* <FriendSummary friendsSummary={friendsSummary}/> */}
-                <Accordion defaultActiveKey="0">
-                  <Card>
-                    <Card.Header>
-                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                        Friends
-                      </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="1">
-                      <Card.Body>
-                        {friendsSummary.map((friend, i) => {
-                          return (
-                            <React.Fragment key={i}>
-                              <p>
-                                Friend Summary: {friend.personaname}
-                              </p>
-                              <img alt="friend profile" src={friend.avatar}/>
-                            </React.Fragment>
-                          )
-                          })}
-                        </Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                </Accordion>
-                {/* <Accordion defaultActiveKey="0">
-                  <Card>
-                    <Card.Header>
-                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                        Friends
-                      </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="1">
-                      <Card.Body>
-                        {friendsList.map((friend, i) => {
-                          return (
-                            <p key={i}>
-                              Friend: {friend.steamid}
-                              <br></br>
-                              Friend since: {timeConverter(friend.friend_since)}
-                            </p>
-                            )
-                        })}
-                      </Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                </Accordion> */}
-              </React.Fragment>
             </Col>
-            <Col>
+            <Col md lg="4">
               <Wishlist wishlist={this.state.wishlist} />
             </Col>
           </Row>
