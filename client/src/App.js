@@ -12,7 +12,9 @@ import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Image from 'react-bootstrap/Image';
+import Progress from 'react-bootstrap/ProgressBar';
 import {Bar, Scatter, Pie} from 'react-chartjs-2';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 
 class App extends Component{
   // The state for the app contains data for a player. This data 
@@ -50,7 +52,11 @@ class App extends Component{
     },
     gamesList: [],
     wishlist: {},
-    badges: []
+    badges: {
+      player_xp: 0,
+      player_level: 0,
+      player_xp_needed_to_level_up: 0.0000000001
+    }
   };
  
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
@@ -120,7 +126,11 @@ class App extends Component{
         this.setState({ownedGames: {game_count: 0, games: []}});
         this.setState({gamesList: []});
         this.setState({wishlist: {}});
-        this.setState({badges: []});
+        this.setState({badges: {
+          player_xp: 0,
+          player_level: 0,
+          player_xp_needed_to_level_up: 0.0000000001
+        }});
       }    
 
       console.log(this.state.playerSummary);
@@ -213,7 +223,7 @@ class App extends Component{
       )
     }
 
-    function Wishlist_Game(props) {
+    function WishlistGame(props) {
       const game = props.game;
       const appid = props.appid;
       if(game.subs.length > 0)
@@ -222,7 +232,7 @@ class App extends Component{
           <React.Fragment>
             <ListGroup.Item as="li">
               <Image src={game.capsule} />
-              <a href={"https://store.steampowered.com/app/" + appid} target="_blank">{game.name}</a>
+              <a href={"https://store.steampowered.com/app/" + appid} target="_blank" rel="noopener noreferrer">{game.name}</a>
               <br></br>
               ${game.subs[0].price / 100}
             </ListGroup.Item>
@@ -236,7 +246,7 @@ class App extends Component{
     function Wishlist(props) {
       const wishlist = props.wishlist;
       
-      if(wishlist.success == 2)
+      if(wishlist.success === 2)
       {
         return(null);
       } else {
@@ -246,85 +256,46 @@ class App extends Component{
           wishlist_games.push(value);
           wishlist_appids.push(key);
         }
-        // wishlist_games.sort((a,b) => {return a.priority - b.priority});
-        console.log("Wishlist_games:", wishlist_games)
   
         return (
           <React.Fragment>
-            <Accordion_component header="Wishlist" body={
+            <AccordionComponent header="Wishlist" body={
               <ListGroup as="ul" style={{overflow: 'auto', height: '460px'}}>
               {
                   wishlist_games.map((game, i) => {
                     return(
-                      <Wishlist_Game game={game} appid={wishlist_appids[i]}/>
+                      <WishlistGame game={game} appid={wishlist_appids[i]}/>
                     )
                   })
               }
               </ListGroup>
-            }>
-            </Accordion_component>
-            {/* <Accordion defaultActiveKey="0">
-              <Card>
-                <Card.Header>
-                  <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                    Wishlist
-                  </Accordion.Toggle>
-                </Card.Header>
-                <Accordion.Collapse eventKey="0">
-                  <Card.Body>
-                    <ListGroup as="ul" style={{overflow: 'auto', height: '460px'}}>
-                    {
-                        wishlist_games.map((game, i) => {
-                          return(
-                            <Wishlist_Game game={game} appid={wishlist_appids[i]}/>
-                          )
-                        })
-                    }
-                    </ListGroup>
-                  </Card.Body>
-                </Accordion.Collapse>
-              </Card>
-            </Accordion> */}
-          </React.Fragment>
-          // <React.Fragment>
-          //   <h2>Wishlist</h2>
-            // <ListGroup as="ul" style={{overflow: 'auto', height: '460px'}}>
-            // {
-            //     wishlist_games.map((game, i) => {
-            //       return(
-            //         <Wishlist_Game game={game} appid={wishlist_appids[i]}/>
-            //       )
-            //     })
-            // }
-            // </ListGroup>
-          // </React.Fragment>
-        )
-      }
-
-      function Accordion_component(props) {
-        const header = props.header;
-        const body = props.body;
-        return (
-          <React.Fragment>
-            <Accordion defaultActiveKey="0">
-              <Card>
-                <Card.Header>
-                  <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                    {header}
-                  </Accordion.Toggle>
-                </Card.Header>
-                <Accordion.Collapse eventKey="0">
-                  <Card.Body>
-                    {body}
-                  </Card.Body>
-                </Accordion.Collapse>
-              </Card>
-            </Accordion>
+            }/>
           </React.Fragment>
         )
       }
     }
-
+    function AccordionComponent(props) {
+      const header = props.header;
+      const body = props.body;
+      return (
+        <React.Fragment>
+          <Accordion defaultActiveKey="0">
+            <Card>
+              <Card.Header>
+                <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                  {header}
+                </Accordion.Toggle>
+              </Card.Header>
+              <Accordion.Collapse eventKey="0">
+                <Card.Body>
+                  {body}
+                </Card.Body>
+              </Accordion.Collapse>
+            </Card>
+          </Accordion>
+        </React.Fragment>
+      )
+    }
     return (
       <div>
         <Container>
@@ -352,6 +323,11 @@ class App extends Component{
                     Last Log Off: {timeConverter(playerSummary.lastlogoff)}
                     <br></br>
                     Profile Created: {timeConverter(playerSummary.timecreated)}
+                    <br></br>
+                    Player Level: {this.state.badges.player_level}
+                    <br></br>
+                    Exp Progress: <ProgressBar now={(this.state.badges.player_xp / (this.state.badges.player_xp + this.state.badges.player_xp_needed_to_level_up))*100} 
+                      label={this.state.badges.player_xp_needed_to_level_up + "\tneeded to level up"}/>
                   </Card.Text>
                 </Card.Body>
               </Card>
@@ -433,33 +409,10 @@ class App extends Component{
           </Row>
           <Row>
             <Col>
-              {/* {console.log(this.state.recentlyPlayed.games.map(game => game.name))} */}
-              {/* <Bar
-                data={
-                  {
-                    labels: this.state.recentlyPlayed.games.map(game => game.name),
-                    datasets: [
-                      {
-                        label: "Playtime (Minutes)",
-                        backgroundColor: "rgba(0,123,255,1)",
-                        data: this.state.recentlyPlayed.games.map((game) => game.playtime_2weeks)
-                      }
-                    ]
-                  }
-                }
-                options={{
-                  title:{
-                    display:true,
-                    text:'Recently Played Games',
-                    fontSize:20
-                  },
-                  legend:{
-                    display:true,
-                    position:'right'
-                  }
-                }}
-              /> */}
-              <RecentlyPlayedBar games={this.state.recentlyPlayed.games}/>
+              <AccordionComponent header="Steam Statistics" body={
+                <RecentlyPlayedBar games={this.state.recentlyPlayed.games}/>
+              }/>
+              {/* <RecentlyPlayedBar games={this.state.recentlyPlayed.games}/> */}
               <Bar
                 data={
                   {
