@@ -12,9 +12,8 @@ import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Image from 'react-bootstrap/Image';
-import Progress from 'react-bootstrap/ProgressBar';
-import {Bar, Scatter, Pie} from 'react-chartjs-2';
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import {Bar, Scatter, Pie} from 'react-chartjs-2';
 
 class App extends Component{
   // The state for the app contains data for a player. This data 
@@ -86,7 +85,8 @@ class App extends Component{
           this.setState({ownedGames: dataJSON[4].response});
         }
         this.setState({gamesList: dataJSON[5].applist.apps});
-        if(dataJSON[6] === {success: 2})
+        console.log(dataJSON[6]);
+        if(dataJSON[6].success === 2)
         {
           this.setState({wishlist: {}});
         } else {
@@ -251,17 +251,18 @@ class App extends Component{
             <Card.Title>{playerSummary.personaname}</Card.Title>
             <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile</Card.Link>
             <Card.Text>
+              <UserPersonaState personastate={playerSummary.personastate}/>
               Last Log Off: {timeConverter(playerSummary.lastlogoff)}
               <br></br>
               Profile Created: {timeConverter(playerSummary.timecreated)}
               <br></br>
               Player Level: {badges.player_level}
               <br></br>
-              Exp Progress: <ProgressBar now={(badges.player_xp / (badges.player_xp + badges.player_xp_needed_to_level_up))*100} 
-                label={badges.player_xp_needed_to_level_up + "\tneeded to level up"}/>
-              <br></br>
-              <UserPersonaState personastate={playerSummary.personastate}/>
+              Exp Progress:     
+                     
             </Card.Text>
+            <ProgressBar now={(badges.player_xp / (badges.player_xp + badges.player_xp_needed_to_level_up))*100} 
+                label={badges.player_xp_needed_to_level_up + "\tneeded to level up"}/>   
           </Card.Body>
         </Card>
       )
@@ -389,7 +390,7 @@ class App extends Component{
     function Wishlist(props) {
       const wishlist = props.wishlist;
       
-      if(wishlist.success === 2)
+      if(Object.keys(wishlist).length === 0)
       {
         return(null);
       } else {
@@ -407,7 +408,7 @@ class App extends Component{
               {
                   wishlist_games.map((game, i) => {
                     return(
-                      <WishlistGame game={game} appid={wishlist_appids[i]}/>
+                      <WishlistGame game={game} appid={wishlist_appids[i]} key={i}/>
                     )
                   })
               }
