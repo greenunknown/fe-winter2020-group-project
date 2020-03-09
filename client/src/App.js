@@ -66,13 +66,15 @@ class App extends Component{
     ],
     landingPage: false,
     loading: false,
-    matchFound: false
+    matchFound: false,
+    showError: true
   };
 
   shrinkSearchBar() {
     var searchDiv = document.getElementById("searchBarDiv");   
     var searchBar = document.getElementById("searchBar");
     var title = document.getElementById("titleHeader");
+    var loadingDiv = document.getElementById("loadingDiv");
 
     searchDiv.style.width= "30%";
     searchDiv.style.padding = "0px";
@@ -80,12 +82,18 @@ class App extends Component{
     searchDiv.style.marginBottom = "50px";
     
     searchDiv.style.height= "10%";
-    searchDiv.style.textAlign = "left";
 
-    searchBar.style.height = "10";
     title.style.margin = "5px";
     title.style.fontSize = "20px";
     // title.style.margin = "30px";
+    searchDiv.style.alignSelf = "flex-start";
+    loadingDiv.style.alignSelf = "center";
+  }
+
+  displayError(error) {
+    var div = document.getElementById("searchBarDiv");
+    var errorText = document.createTextNode(error);
+    div.appendChild(errorText);
   }
 
 
@@ -147,6 +155,9 @@ class App extends Component{
         this.setState({wishlist: dataJSON[6]});
       }
       this.setState({badges: dataJSON[7].response});
+
+      var mainDiv = document.getElementById("mainDiv");
+      mainDiv.style.display = "block";
     } else {
       this.setState({loading: false});
       this.setState({matchFound: false});
@@ -184,12 +195,7 @@ class App extends Component{
     }
     
     this.setState({loading: false});
-    var mainDiv = document.getElementById("mainDiv");
     
-    
-    mainDiv.style.display = "block";
-    
-
     console.log(this.state.playerSummary);
     console.log(this.state.friendsList);
     console.log(this.state.friendsSummary);
@@ -256,7 +262,7 @@ class App extends Component{
   
 
     return (
-        <Container>
+        <Container id="container">
           <div className = "searchBarDiv" id="searchBarDiv">
         
             <h1 className="titleHeader" id="titleHeader">Steam Dash</h1>            
@@ -268,7 +274,11 @@ class App extends Component{
                     </InputGroup.Append>
                   </InputGroup>
               </Form>
-              <ClipLoader size={80} color={"#555555"} loading={this.state.loading}/>
+              
+              {/* For errors or loading wheel */}
+              <div className="loadingDiv" id="loadingDiv">
+                <ClipLoader size={80} color={"#555555"} loading={this.state.loading}/>
+              </div>
           </div>
 
           <div className="mainDiv" id="mainDiv">
