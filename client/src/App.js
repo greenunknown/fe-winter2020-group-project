@@ -187,6 +187,86 @@ class App extends Component{
       }
     }
 
+    function UserPersonaState(props) {
+      const personastate = props.personastate;
+      if(personastate === 0) {
+        return(
+          <Card bg='light' text='dark'>
+            <Card.Header>Offline</Card.Header>
+          </Card>
+        );
+      } else if(personastate === 1) {
+        return(
+          <Card bg='success' text='white'>
+          <Card.Header>Online</Card.Header>
+        </Card>
+        )
+      } else if(personastate === 2) {
+        return(
+          <Card bg='danger' text='white'>
+            <Card.Header>Busy</Card.Header>
+          </Card>
+        )
+      } else if(personastate === 3) {
+        return(
+          <Card bg='warning' text='white'>
+            <Card.Header>Away</Card.Header>
+          </Card>
+        )
+      } else if(personastate === 4) {
+        return(
+          <Card bg='secondary' text='white'>
+            <Card.Header>Snooze</Card.Header>
+          </Card>
+        )
+      } else if(personastate === 5) {
+        return(
+          <Card bg='info' text='white'>
+            <Card.Header>Looking to trade</Card.Header>
+          </Card>
+        )
+      } else if(personastate === 6) {
+        return(
+          <Card bg='primary' text='white'>
+            <Card.Header>Looking to play</Card.Header>
+          </Card>
+        )
+      } else {
+        return ( 
+          null
+          // <Card bg='dark' text='white'>
+          //   <Card.Header>ERROR</Card.Header>
+          // </Card>
+        )
+      }
+    }
+
+    function UserProfile(props) {
+      const playerSummary = props.playerSummary;
+      const badges = props.badges;
+      return(
+        <Card>
+          <Card.Img variant="top" src={playerSummary.avatarfull} />
+          <Card.Body>
+            <Card.Title>{playerSummary.personaname}</Card.Title>
+            <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile</Card.Link>
+            <Card.Text>
+              Last Log Off: {timeConverter(playerSummary.lastlogoff)}
+              <br></br>
+              Profile Created: {timeConverter(playerSummary.timecreated)}
+              <br></br>
+              Player Level: {badges.player_level}
+              <br></br>
+              Exp Progress: <ProgressBar now={(badges.player_xp / (badges.player_xp + badges.player_xp_needed_to_level_up))*100} 
+                label={badges.player_xp_needed_to_level_up + "\tneeded to level up"}/>
+              <br></br>
+              <UserPersonaState personastate={playerSummary.personastate}/>
+            </Card.Text>
+          </Card.Body>
+        </Card>
+      )
+    }
+
     function RecentlyPlayedBar(props) {
       let games = props.games;
       let ls = games.map(game => game.name);
@@ -237,23 +317,16 @@ class App extends Component{
       const ls = games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map(game => game.appid);
       const d = games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map((game) => game.playtime_forever);
       const game_names = new Array(10);
-      console.log("ls", ls);
       for(let i = 0; i < gameslist.length; i++)
       {
         for(let j = 0; j < ls.length; j++)
         {
-          // console.log("g:", gameslist[i].appid, "ls:", ls[j].appid)
           if(gameslist[i].appid === ls[j])
           {
-            console.log(gameslist[i], ls[j]);
             game_names[j] = gameslist[i].name;
-            console.log("gnj:", game_names[j])
           }
         }
       }
-      console.log("ls", ls);
-      console.log("gameslist", gameslist)
-      console.log("Game names:", game_names);
       return(
         <Bar
           data={
@@ -330,7 +403,7 @@ class App extends Component{
         return (
           <React.Fragment>
             <AccordionComponent header="Wishlist" body={
-              <ListGroup as="ul" style={{overflow: 'auto', height: '460px'}}>
+              <ListGroup as="ul" style={{overflow: 'auto', height: '500px'}}>
               {
                   wishlist_games.map((game, i) => {
                     return(
@@ -384,7 +457,8 @@ class App extends Component{
           </Row>
           <Row>
             <Col md lg="4">
-              <Card>
+              <UserProfile playerSummary={this.state.playerSummary} badges={this.state.badges}/>
+              {/* <Card>
                 <Card.Img variant="top" src={playerSummary.avatarfull} />
                 <Card.Body>
                   <Card.Title>{playerSummary.personaname}</Card.Title>
@@ -400,7 +474,7 @@ class App extends Component{
                       label={this.state.badges.player_xp_needed_to_level_up + "\tneeded to level up"}/>
                   </Card.Text>
                 </Card.Body>
-              </Card>
+              </Card> */}
             </Col>
             <Col>
               <h2>Friends List</h2>
@@ -480,49 +554,11 @@ class App extends Component{
           <Row>
             <Col>
               <AccordionComponent header="Steam Statistics" body={
-                <RecentlyPlayedBar games={this.state.recentlyPlayed.games}/>
+                <React.Fragment>
+                  <RecentlyPlayedBar games={this.state.recentlyPlayed.games}/>
+                  <TopTenOwnedGames games={this.state.ownedGames.games} gameslist={this.state.gamesList}/>
+                </React.Fragment>
               }/>
-              {/* <RecentlyPlayedBar games={this.state.recentlyPlayed.games}/> */}
-              {/* {console.log("Filtered top 10:", this.state.ownedGames.games.sort((a,b) => {return b.playtime_forever - a.playtime_forever})
-              .slice(0, 10))
-              // .map(game => this.state.gamesList.filter(e => e.appid === game.appid)).map(e => e)
-              )} */}
-              <TopTenOwnedGames games={this.state.ownedGames.games} gameslist={this.state.gamesList}/>
-              {/* <Bar
-                data={
-                  {
-                    labels: this.state.ownedGames.games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map(game => game.appid),
-                    datasets: [
-                      {
-                        label: "Playtime (Minutes)",
-                        backgroundColor: ["#007bff", 
-                        "#ff3648", 
-                        "#ffbb34",
-                        "#01c851",
-                        "#33b5e7",
-                        "#2abbac",
-                        "#4385f5",
-                        "#aa66cd",
-                        "#34383e",
-                        "#69727b"
-                        ],
-                        data: this.state.ownedGames.games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map((game) => game.playtime_forever)
-                      }
-                    ]
-                  }
-                }
-                options={{
-                  title:{
-                    display:true,
-                    text:'Top 10 Owned Games Playtime',
-                    fontSize:20
-                  },
-                  legend:{
-                    display:true,
-                    position:'right'
-                  }
-                }}
-              /> */}
             </Col>
           </Row>
         </Container>
