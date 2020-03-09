@@ -169,10 +169,9 @@ class App extends Component{
     }
 
     function FriendSummary(props) {
-      const playerSummary = props.playerSummary;
       const friendsSummary = props.friendsSummary;
 
-      if(playerSummary.steamid !== "")
+      if(friendsSummary[0].steamid !== "")
       {
         return(
           <Accordion defaultActiveKey="1">
@@ -255,9 +254,6 @@ class App extends Component{
       } else {
         return ( 
           null
-          // <Card bg='dark' text='white'>
-          //   <Card.Header>ERROR</Card.Header>
-          // </Card>
         )
       }
     }
@@ -265,28 +261,63 @@ class App extends Component{
     function UserProfile(props) {
       const playerSummary = props.playerSummary;
       const badges = props.badges;
-      return(
-        <Card>
-          <Card.Img variant="top" src={playerSummary.avatarfull} />
-          <Card.Body>
-            <Card.Title>{playerSummary.personaname}</Card.Title>
-            <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile</Card.Link>
-            <Card.Text>
-              <UserPersonaState personastate={playerSummary.personastate}/>
-              Last Log Off: {timeConverter(playerSummary.lastlogoff)}
-              <br></br>
-              Profile Created: {timeConverter(playerSummary.timecreated)}
-              <br></br>
-              Player Level: {badges.player_level}
-              <br></br>
-              Exp Progress:     
-                     
-            </Card.Text>
-            <ProgressBar now={(badges.player_xp / (badges.player_xp + badges.player_xp_needed_to_level_up))*100} 
-                label={badges.player_xp_needed_to_level_up + "\tneeded to level up"}/>   
-          </Card.Body>
-        </Card>
-      )
+
+      if(playerSummary.steamid !== ""){
+        return(
+          <Card>
+            <Card.Img variant="top" src={playerSummary.avatarfull} />
+            <Card.Body>
+              <Card.Title>{playerSummary.personaname}</Card.Title>
+              <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile</Card.Link>
+              <Card.Text>
+                <UserPersonaState personastate={playerSummary.personastate}/>
+                Last Log Off: {timeConverter(playerSummary.lastlogoff)}
+                <br></br>
+                Profile Created: {timeConverter(playerSummary.timecreated)}
+                <br></br>
+                Player Level: {badges.player_level}
+                <br></br>
+                Exp Progress:     
+                       
+              </Card.Text>
+              <ProgressBar now={(badges.player_xp / (badges.player_xp + badges.player_xp_needed_to_level_up))*100} 
+                  label={badges.player_xp_needed_to_level_up + "\tneeded to level up"}/>   
+            </Card.Body>
+          </Card>
+        )
+      } else {
+        return(null);
+      }
+      
+    }
+
+    function RecentlyPlayed(props) {
+      const recentlyPlayed = props.recentlyPlayed;
+
+      if(recentlyPlayed.total_count > 0)
+      {
+        return(
+          <React.Fragment>
+            <h2>Recently Played</h2>
+            {recentlyPlayed.games.map((game, i) => {
+              return (
+                <div key={i}>
+                  <Card >
+                    <Card.Img variant="top" src={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"} />
+                    <Card.Body>
+                      <Card.Title>{game.name}</Card.Title>
+                      <Card.Link href={"https://store.steampowered.com/app/" + game.appid + "/"} target="_blank">Steam Store Page</Card.Link>
+                    </Card.Body>
+                  </Card>
+                </div>
+              )
+            })}
+          </React.Fragment>
+        );
+      } else {
+        return(null);
+      }
+      
     }
 
     function RecentlyPlayedBar(props) {
@@ -439,6 +470,7 @@ class App extends Component{
         )
       }
     }
+
     function AccordionComponent(props) {
       const header = props.header;
       const body = props.body;
@@ -481,16 +513,17 @@ class App extends Component{
             <Col md lg="4">
               <UserProfile playerSummary={this.state.playerSummary} badges={this.state.badges}/>
             </Col>
-            <Col md lg="4">
-              <FriendSummary playerSummary={this.state.playerSummary} friendsSummary={this.state.friendsSummary}/>
+            <Col md lg="3">
+              <FriendSummary /*playerSummary={this.state.playerSummary}*/ friendsSummary={this.state.friendsSummary}/>
             </Col>
-            <Col md lg="4">
+            <Col md lg="5">
               <Wishlist wishlist={this.state.wishlist} />
             </Col>
           </Row>
           <Row>
             <Col md lg="4">
-                <h2>Recently Played</h2>
+                <RecentlyPlayed recentlyPlayed={recentlyPlayed}/>
+                {/* <h2>Recently Played</h2>
                 <React.Fragment>
                   {recentlyPlayed.games.map((game, i) => {
                     return (
@@ -505,11 +538,12 @@ class App extends Component{
                       </div>
                     )
                   })}
-                </React.Fragment>
+                </React.Fragment> */}
             </Col>
           </Row>
           <Row>
             <Col>
+              {/* Display the charts for recently played and top ten played owned games */}
               <AccordionComponent header="Steam Statistics" body={
                 <React.Fragment>
                   <RecentlyPlayedBar games={this.state.recentlyPlayed.games}/>
