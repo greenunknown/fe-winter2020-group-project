@@ -91,102 +91,112 @@ class App extends Component{
 
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
   callBackendAPI = async () => {
+
+    var response = '';
     
     var searchBar = document.getElementById("searchBar");
-    
+
     if(searchBar.value !== ''){
       this.setState({loading: true});
     }
-    
-    const response = await fetch('http://localhost:5000/search', {
+
+    try {
+      response = await fetch('http://localhost:5000/search', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ userId: this.state.userid }),
-    });
-      const data = await response.text();
-      if(data !== "No match") 
-      {
-        if(!this.landingPage) {
-          this.shrinkSearchBar();
-        }
-
-        this.setState({matchFound: true});
-        var dataJSON = JSON.parse(data);
-        this.setState({playerSummary: dataJSON[0].response.players[0]})
-        this.setState({friendsList: dataJSON[1].friendslist.friends});
-        this.setState({friendsSummary: dataJSON[2].response.players})
-        // this.setState({recentlyPlayed: dataJSON[3].response});
-        if (Object.keys(dataJSON[3].response).length === 0) {
-          this.setState({recentlyPlayed: {total_count: 0, games: []}});
-        } else {
-          this.setState({recentlyPlayed: dataJSON[3].response});
-        }
-        // this.setState({ownedGames: dataJSON[4].response});
-        if (Object.keys(dataJSON[4].response).length === 0) {
-          this.setState({recentlyPlayed: {game_count: 0, games: []}});
-        } else {
-          this.setState({ownedGames: dataJSON[4].response});
-        }
-        this.setState({gamesList: dataJSON[5].applist.apps});
-        if(dataJSON[6] === {success: 2})
-        {
-          this.setState({wishlist: {}});
-        } else {
-          this.setState({wishlist: dataJSON[6]});
-        }
-        this.setState({badges: dataJSON[7].response});
-      } else {
-        this.setState({loading: false});
-        this.setState({matchFound: false});
-        console.log("No match found!");
-        this.setState({playerSummary: [
-          {
-            steamid: "",
-            personaname: "",
-            profileurl: "#",
-            avatar: "",
-            avatarmedium: "",
-            avatarfull: "",
-            lastlogoff: 0,
-            timecreated: 0
-          }
-        ]});
-        this.setState({friendsList: []});
-        this.setState({friendsSummary: [
-          {
-            steamid: "",
-            personaname: "",
-            profileurl: "#",
-            avatar: "",
-            avatarmedium: "",
-            avatarfull: "",
-            lastlogoff: 0,
-            timecreated: 0
-          }
-        ]});
-        this.setState({recentlyPlayed: {total_count: 0, games: []}});
-        this.setState({ownedGames: {game_count: 0, games: []}});
-        this.setState({gamesList: []});
-        this.setState({wishlist: {}});
-        this.setState({badges: []});
-      }
-      
+      });
+    } catch(err) {
       this.setState({loading: false});
-      var mainDiv = document.getElementById("mainDiv");
-      
-      
-      mainDiv.style.display = "block";
-     
+      return;
+    }
 
-      console.log(this.state.playerSummary);
-      console.log(this.state.friendsList);
-      console.log(this.state.friendsSummary);
-      console.log(this.state.recentlyPlayed);
-      console.log(this.state.ownedGames);
-      console.log(this.state.wishlist);
-      console.log(this.state.badges);
+    const data = await response.text();
+
+    if(data !== "No match") 
+    {
+      if(!this.landingPage) {
+        this.shrinkSearchBar();
+      }
+
+      this.setState({matchFound: true});
+
+      var dataJSON = JSON.parse(data);
+      this.setState({playerSummary: dataJSON[0].response.players[0]})
+      this.setState({friendsList: dataJSON[1].friendslist.friends});
+      this.setState({friendsSummary: dataJSON[2].response.players})
+      // this.setState({recentlyPlayed: dataJSON[3].response});
+      if (Object.keys(dataJSON[3].response).length === 0) {
+        this.setState({recentlyPlayed: {total_count: 0, games: []}});
+      } else {
+        this.setState({recentlyPlayed: dataJSON[3].response});
+      }
+      // this.setState({ownedGames: dataJSON[4].response});
+      if (Object.keys(dataJSON[4].response).length === 0) {
+        this.setState({recentlyPlayed: {game_count: 0, games: []}});
+      } else {
+        this.setState({ownedGames: dataJSON[4].response});
+      }
+      this.setState({gamesList: dataJSON[5].applist.apps});
+      if(dataJSON[6] === {success: 2})
+      {
+        this.setState({wishlist: {}});
+      } else {
+        this.setState({wishlist: dataJSON[6]});
+      }
+      this.setState({badges: dataJSON[7].response});
+    } else {
+      this.setState({loading: false});
+      this.setState({matchFound: false});
+      console.log("No match found!");
+      this.setState({playerSummary: [
+        {
+          steamid: "",
+          personaname: "",
+          profileurl: "#",
+          avatar: "",
+          avatarmedium: "",
+          avatarfull: "",
+          lastlogoff: 0,
+          timecreated: 0
+        }
+      ]});
+      this.setState({friendsList: []});
+      this.setState({friendsSummary: [
+        {
+          steamid: "",
+          personaname: "",
+          profileurl: "#",
+          avatar: "",
+          avatarmedium: "",
+          avatarfull: "",
+          lastlogoff: 0,
+          timecreated: 0
+        }
+      ]});
+      this.setState({recentlyPlayed: {total_count: 0, games: []}});
+      this.setState({ownedGames: {game_count: 0, games: []}});
+      this.setState({gamesList: []});
+      this.setState({wishlist: {}});
+      this.setState({badges: []});
+    }
+    
+    this.setState({loading: false});
+    var mainDiv = document.getElementById("mainDiv");
+    
+    
+    mainDiv.style.display = "block";
+    
+
+    console.log(this.state.playerSummary);
+    console.log(this.state.friendsList);
+    console.log(this.state.friendsSummary);
+    console.log(this.state.recentlyPlayed);
+    console.log(this.state.ownedGames);
+    console.log(this.state.wishlist);
+    console.log(this.state.badges);
   };
 
   handleSubmit(event) {
@@ -258,7 +268,7 @@ class App extends Component{
                     </InputGroup.Append>
                   </InputGroup>
               </Form>
-              <ClipLoader size={100} color={"#555555"} loading={this.state.loading}/>
+              <ClipLoader size={80} color={"#555555"} loading={this.state.loading}/>
           </div>
 
           <div className="mainDiv" id="mainDiv">
