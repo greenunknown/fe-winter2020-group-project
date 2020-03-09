@@ -179,24 +179,50 @@ class App extends Component{
       }
     }
 
-    function recentlyPlayedBar(props) {
-      let ls = props.labels;
-      let ds = props.dataset;
-      let rp = props.recentlyPlayed;
-      ls = rp.map((gamen) => {})
+    function RecentlyPlayedBar(props) {
+      let games = props.games;
+      let ls = games.map(game => game.name);
+      let d = games.map((game) => game.playtime_2weeks);
 
-
+      return(
+        <Bar
+          data={
+            {
+              labels: ls,
+              datasets: [
+                {
+                  label: "Playtime (Minutes)",
+                  backgroundColor: "rgba(0,123,255,1)",
+                  data: d
+                }
+              ]
+            }
+          }
+          options={{
+            title:{
+              display:true,
+              text:'Recently Played Games',
+              fontSize:20
+            },
+            legend:{
+              display:true,
+              position:'right'
+            }
+          }}
+        />
+      )
     }
 
     function Wishlist_Game(props) {
       const game = props.game;
+      const appid = props.appid;
       if(game.subs.length > 0)
       {
         return(
           <React.Fragment>
             <ListGroup.Item as="li">
               <Image src={game.capsule} />
-              {game.name}
+              <a href={"https://store.steampowered.com/app/" + appid} target="_blank">{game.name}</a>
               <br></br>
               ${game.subs[0].price / 100}
             </ListGroup.Item>
@@ -215,48 +241,88 @@ class App extends Component{
         return(null);
       } else {
         let wishlist_games = [];
+        let wishlist_appids = [];
         for(const [key, value] of Object.entries(wishlist)) {
           wishlist_games.push(value);
+          wishlist_appids.push(key);
         }
-        wishlist_games.sort((a,b) => {return a.priority - b.priority});
+        // wishlist_games.sort((a,b) => {return a.priority - b.priority});
         console.log("Wishlist_games:", wishlist_games)
   
         return (
           <React.Fragment>
-            <h2>Wishlist</h2>
-            {/* <ul style={{overflow:'auto', height: 'inherit', display: 'block', maxWidth: 300, marginLeft: 20}}>
-            {
-                wishlist_games.map((game, i) => {
-                  return(
-                    <Wishlist_Game game={game}/>
-                  )
-                })
-            }
-            </ul> */}
-            <ListGroup as="ul" style={{overflow: 'auto'}}>
-            {
-                wishlist_games.map((game, i) => {
-                  return(
-                    <Wishlist_Game game={game}/>
-                  )
-                })
-            }
-            </ListGroup>
-            {/* <ListGroup as="ul">
+            <Accordion_component header="Wishlist" body={
+              <ListGroup as="ul" style={{overflow: 'auto', height: '460px'}}>
               {
-                wishlist_games.map((game, i) => {
-                  <ListGroup.Item as="li" key={i}>
-                    {game.name}
-                    <br></br>
-                    {game.subs[0].price}
-                  </ListGroup.Item>
-                })
+                  wishlist_games.map((game, i) => {
+                    return(
+                      <Wishlist_Game game={game} appid={wishlist_appids[i]}/>
+                    )
+                  })
               }
-            </ListGroup> */}
+              </ListGroup>
+            }>
+            </Accordion_component>
+            {/* <Accordion defaultActiveKey="0">
+              <Card>
+                <Card.Header>
+                  <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                    Wishlist
+                  </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey="0">
+                  <Card.Body>
+                    <ListGroup as="ul" style={{overflow: 'auto', height: '460px'}}>
+                    {
+                        wishlist_games.map((game, i) => {
+                          return(
+                            <Wishlist_Game game={game} appid={wishlist_appids[i]}/>
+                          )
+                        })
+                    }
+                    </ListGroup>
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            </Accordion> */}
+          </React.Fragment>
+          // <React.Fragment>
+          //   <h2>Wishlist</h2>
+            // <ListGroup as="ul" style={{overflow: 'auto', height: '460px'}}>
+            // {
+            //     wishlist_games.map((game, i) => {
+            //       return(
+            //         <Wishlist_Game game={game} appid={wishlist_appids[i]}/>
+            //       )
+            //     })
+            // }
+            // </ListGroup>
+          // </React.Fragment>
+        )
+      }
+
+      function Accordion_component(props) {
+        const header = props.header;
+        const body = props.body;
+        return (
+          <React.Fragment>
+            <Accordion defaultActiveKey="0">
+              <Card>
+                <Card.Header>
+                  <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                    {header}
+                  </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey="0">
+                  <Card.Body>
+                    {body}
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            </Accordion>
           </React.Fragment>
         )
       }
-      
     }
 
     return (
@@ -343,17 +409,6 @@ class App extends Component{
             </Col>
             <Col>
               <Wishlist wishlist={this.state.wishlist} />
-              {/* <ListGroup as="ul">
-                {
-                  return (
-                  for(const [key, value] of Object.entries(this.state.wishlist)) {
-
-                  }
-                  )
-                
-
-                }
-              </ListGroup> */}
             </Col>
           </Row>
           <Row>
@@ -375,9 +430,11 @@ class App extends Component{
                   })}
                 </React.Fragment>
             </Col>
+          </Row>
+          <Row>
             <Col>
               {/* {console.log(this.state.recentlyPlayed.games.map(game => game.name))} */}
-              <Bar
+              {/* <Bar
                 data={
                   {
                     labels: this.state.recentlyPlayed.games.map(game => game.name),
@@ -401,7 +458,8 @@ class App extends Component{
                     position:'right'
                   }
                 }}
-              />
+              /> */}
+              <RecentlyPlayedBar games={this.state.recentlyPlayed.games}/>
               <Bar
                 data={
                   {
