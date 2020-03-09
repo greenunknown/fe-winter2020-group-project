@@ -48,16 +48,7 @@ class App extends Component{
     },
     gamesList: [],
     wishlist: {},
-    badges: [],
-    labels: ['January', 'February', 'March',
-    'April', 'May'],
-    datasets: [
-      {
-        label: "Playtime",
-        backgroundColor: "rgba(0,123,255,1)",
-        data: [65, 59, 80, 81, 56]
-      }
-    ]
+    badges: []
   };
  
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
