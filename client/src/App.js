@@ -169,19 +169,46 @@ class App extends Component{
     }
 
     function FriendSummary(props) {
+      const playerSummary = props.playerSummary;
       const friendsSummary = props.friendsSummary;
-      if(friendsSummary[0].steamid !== "")
+
+      if(playerSummary.steamid !== "")
       {
-        friendsSummary.map((friend, i) => {
-          return (
-            <React.Fragment>
-              <p key={i}>
-                Friend Summary: {friend.personaname}
-              </p>
-              <img alt="friend profile" src={friend.avatar}/>
-            </React.Fragment>
-          )
-        });
+        return(
+          <Accordion defaultActiveKey="1">
+            <Card>
+              <Card.Header>
+                <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                  Friends
+                </Accordion.Toggle>
+              </Card.Header>
+              <Accordion.Collapse eventKey="1">
+                <Card.Body style={{overflow: 'auto', height: '500px'}}>
+                  {friendsSummary.map((friend, i) => {
+                    return (
+                      <React.Fragment key={i}>
+                        <p>
+                          Friend Summary: {friend.personaname}
+                        </p>
+                        <img alt="friend profile" src={friend.avatar}/>
+                      </React.Fragment>
+                    )
+                    })}
+                  </Card.Body>
+              </Accordion.Collapse>
+            </Card>
+          </Accordion>
+        )
+        // friendsSummary.map((friend, i) => {
+        //   return (
+        //     <React.Fragment>
+        //       <p key={i}>
+        //         Friend Summary: {friend.personaname}
+        //       </p>
+        //       <img alt="friend profile" src={friend.avatar}/>
+        //     </React.Fragment>
+        //   )
+        // });
       } else {
         return(null);
       }
@@ -479,7 +506,8 @@ class App extends Component{
             </Col>
             <Col>
               <h2>Friends List</h2>
-              <div>
+              <FriendSummary playerSummary={this.state.playerSummary} friendsSummary={this.state.friendsSummary}/>
+              <React.Fragment>
                 {/* <FriendSummary friendsSummary={friendsSummary}/> */}
                 <Accordion defaultActiveKey="0">
                   <Card>
@@ -504,7 +532,7 @@ class App extends Component{
                     </Accordion.Collapse>
                   </Card>
                 </Accordion>
-                <Accordion defaultActiveKey="0">
+                {/* <Accordion defaultActiveKey="0">
                   <Card>
                     <Card.Header>
                       <Accordion.Toggle as={Button} variant="link" eventKey="1">
@@ -525,8 +553,8 @@ class App extends Component{
                       </Card.Body>
                     </Accordion.Collapse>
                   </Card>
-                </Accordion>
-              </div>
+                </Accordion> */}
+              </React.Fragment>
             </Col>
             <Col>
               <Wishlist wishlist={this.state.wishlist} />
