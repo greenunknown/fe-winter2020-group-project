@@ -75,13 +75,11 @@ class App extends Component{
         this.setState({playerSummary: dataJSON[0].response.players[0]})
         this.setState({friendsList: dataJSON[1].friendslist.friends});
         this.setState({friendsSummary: dataJSON[2].response.players})
-        // this.setState({recentlyPlayed: dataJSON[3].response});
         if (Object.keys(dataJSON[3].response).length === 0) {
           this.setState({recentlyPlayed: {total_count: 0, games: []}});
         } else {
           this.setState({recentlyPlayed: dataJSON[3].response});
         }
-        // this.setState({ownedGames: dataJSON[4].response});
         if (Object.keys(dataJSON[4].response).length === 0) {
           this.setState({recentlyPlayed: {game_count: 0, games: []}});
         } else {
@@ -202,7 +200,17 @@ class App extends Component{
               datasets: [
                 {
                   label: "Playtime (Minutes)",
-                  backgroundColor: "rgba(0,123,255,1)",
+                  backgroundColor: ["#007bff", 
+                  "#ff3648", 
+                  "#ffbb34",
+                  "#01c851",
+                  "#33b5e7",
+                  "#2abbac",
+                  "#4385f5",
+                  "#aa66cd",
+                  "#34383e",
+                  "#69727b"
+                  ],
                   data: d
                 }
               ]
@@ -212,6 +220,68 @@ class App extends Component{
             title:{
               display:true,
               text:'Recently Played Games',
+              fontSize:20
+            },
+            legend:{
+              display:true,
+              position:'right'
+            }
+          }}
+        />
+      )
+    }
+
+    function TopTenOwnedGames(props) {
+      const games = props.games;
+      const gameslist = props.gameslist;
+      const ls = games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map(game => game.appid);
+      const d = games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map((game) => game.playtime_forever);
+      const game_names = new Array(10);
+      console.log("ls", ls);
+      for(let i = 0; i < gameslist.length; i++)
+      {
+        for(let j = 0; j < ls.length; j++)
+        {
+          // console.log("g:", gameslist[i].appid, "ls:", ls[j].appid)
+          if(gameslist[i].appid === ls[j])
+          {
+            console.log(gameslist[i], ls[j]);
+            game_names[j] = gameslist[i].name;
+            console.log("gnj:", game_names[j])
+          }
+        }
+      }
+      console.log("ls", ls);
+      console.log("gameslist", gameslist)
+      console.log("Game names:", game_names);
+      return(
+        <Bar
+          data={
+            {
+              labels: game_names,
+              datasets: [
+                {
+                  label: "Playtime (Minutes)",
+                  backgroundColor: ["#007bff", 
+                  "#ff3648", 
+                  "#ffbb34",
+                  "#01c851",
+                  "#33b5e7",
+                  "#2abbac",
+                  "#4385f5",
+                  "#aa66cd",
+                  "#34383e",
+                  "#69727b"
+                  ],
+                  data: d
+                }
+              ]
+            }
+          }
+          options={{
+            title:{
+              display:true,
+              text:'Top 10 Owned Games Playtime',
               fontSize:20
             },
             legend:{
@@ -413,15 +483,30 @@ class App extends Component{
                 <RecentlyPlayedBar games={this.state.recentlyPlayed.games}/>
               }/>
               {/* <RecentlyPlayedBar games={this.state.recentlyPlayed.games}/> */}
-              <Bar
+              {/* {console.log("Filtered top 10:", this.state.ownedGames.games.sort((a,b) => {return b.playtime_forever - a.playtime_forever})
+              .slice(0, 10))
+              // .map(game => this.state.gamesList.filter(e => e.appid === game.appid)).map(e => e)
+              )} */}
+              <TopTenOwnedGames games={this.state.ownedGames.games} gameslist={this.state.gamesList}/>
+              {/* <Bar
                 data={
                   {
-                    labels: this.state.ownedGames.games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).map(game => game.appid),
+                    labels: this.state.ownedGames.games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map(game => game.appid),
                     datasets: [
                       {
                         label: "Playtime (Minutes)",
-                        backgroundColor: "rgba(0,123,255,1)",
-                        data: this.state.ownedGames.games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).map((game) => game.playtime_forever)
+                        backgroundColor: ["#007bff", 
+                        "#ff3648", 
+                        "#ffbb34",
+                        "#01c851",
+                        "#33b5e7",
+                        "#2abbac",
+                        "#4385f5",
+                        "#aa66cd",
+                        "#34383e",
+                        "#69727b"
+                        ],
+                        data: this.state.ownedGames.games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map((game) => game.playtime_forever)
                       }
                     ]
                   }
@@ -429,7 +514,7 @@ class App extends Component{
                 options={{
                   title:{
                     display:true,
-                    text:'Owned Games Playtime',
+                    text:'Top 10 Owned Games Playtime',
                     fontSize:20
                   },
                   legend:{
@@ -437,7 +522,7 @@ class App extends Component{
                     position:'right'
                   }
                 }}
-              />
+              /> */}
             </Col>
           </Row>
         </Container>
