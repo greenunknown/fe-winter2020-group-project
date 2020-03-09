@@ -57,9 +57,34 @@ async function getSteamId(usersteamname, response) {
         let recentlyPlayed = await getJSON('http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key='+ key +'&steamid=' + usersteamid);
         console.log("recentlyPlayed:", recentlyPlayed);
 
-        // Get the player's owned games
+        // Get the player's owned games     
         let ownedGames = await getJSON('http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key='+ key + '&steamid=' + usersteamid);
         console.log("ownedGames:", ownedGames);
+            
+        // Gonna comment this out for now.. so we don't keep getting 403 errors 
+        // if(Object.entries(ownedGames.response).length !== 0) {        
+  
+        //     // Can only send 10 requests at a time.....
+        //     var gameCount = ownedGames.response.game_count;
+        //     var limit = gameCount < 9 ? gameCount : 9;
+        //     var proms = [];
+            
+        //     var ids = [];
+        //     for(var i =0; i < limit; i++){
+        //             var id = ownedGames.response.games[i].appid;
+        //             ids.push(id);
+        //             var prom = getJSON('https://store.steampowered.com/api/appdetails?appids=' + id);
+        //             proms.push(prom);
+        //     }
+
+        //     // S?ave promises and wait for all results at once instead of executing sequentially
+        //     const allResults =  await Promise.all(proms);
+
+        //     ids.forEach(i => {
+        //         console.log(allResults[i].data);
+        //     })
+        // }
+
 
         // Get the list of all games on steam
         let gameslist = await getJSON('http://api.steampowered.com/ISteamApps/GetAppList/v2');
@@ -73,6 +98,8 @@ async function getSteamId(usersteamname, response) {
         let badges = await getJSON('http://api.steampowered.com/IPlayerService/GetBadges/v1/?key=' + key + '&steamid=' + usersteamid);
         console.log("badges", badges);
 
+        // console.log(ownedGames.response.games);
+        
         // Package and send the data
         let data = [playerSum, friends, friendsSum, recentlyPlayed, ownedGames, gameslist, wishlist, badges];
         response.send(data);

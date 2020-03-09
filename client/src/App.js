@@ -89,14 +89,15 @@ class App extends Component{
   }
 
 
- 
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
   callBackendAPI = async () => {
-    this.setState({loading: true});
-    if(!this.landingPage) {
-      this.shrinkSearchBar();
+    
+    var searchBar = document.getElementById("searchBar");
+    
+    if(searchBar.value !== ''){
+      this.setState({loading: true});
     }
-
+    
     const response = await fetch('http://localhost:5000/search', {
       method: 'POST',
       headers: {
@@ -107,6 +108,10 @@ class App extends Component{
       const data = await response.text();
       if(data !== "No match") 
       {
+        if(!this.landingPage) {
+          this.shrinkSearchBar();
+        }
+
         this.setState({matchFound: true});
         var dataJSON = JSON.parse(data);
         this.setState({playerSummary: dataJSON[0].response.players[0]})
@@ -133,6 +138,7 @@ class App extends Component{
         }
         this.setState({badges: dataJSON[7].response});
       } else {
+        this.setState({loading: false});
         this.setState({matchFound: false});
         console.log("No match found!");
         this.setState({playerSummary: [
@@ -276,7 +282,7 @@ class App extends Component{
             <Col md lg="4" >
                 {/* <FriendSummary friendsSummary={friendsSummary}/> */}
                 <h3>Friends list</h3>
-                        <ul class="friendsList">
+                        <ul className="friendsList">
                         {friendsSummary.map((friend, i) => {
                           return (
                               <li className="friendCell">
