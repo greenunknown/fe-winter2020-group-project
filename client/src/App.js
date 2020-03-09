@@ -95,8 +95,7 @@ class App extends Component{
         this.setState({badges: dataJSON[7].response});
       } else {
         console.log("No match found!");
-        this.setState({playerSummary: [
-          {
+        this.setState({playerSummary: {
             steamid: "",
             personaname: "",
             profileurl: "#",
@@ -105,8 +104,7 @@ class App extends Component{
             avatarfull: "",
             lastlogoff: 0,
             timecreated: 0
-          }
-        ]});
+        }});
         this.setState({friendsList: []});
         this.setState({friendsSummary: [
           {
@@ -131,7 +129,7 @@ class App extends Component{
         }});
       }    
 
-      console.log(this.state.playerSummary);
+      console.log("playerSummary", this.state.playerSummary);
       console.log(this.state.friendsList);
       console.log(this.state.friendsSummary);
       console.log(this.state.recentlyPlayed);
@@ -146,7 +144,7 @@ class App extends Component{
   };
 
   render() {
-    const {friendsList, recentlyPlayed, playerSummary, friendsSummary} = this.state;
+    const {friendsList, recentlyPlayed, playerSummary, friendsSummary, wishlist, badges, ownedGames, gamesList} = this.state;
 
     // Time converter function by shomrat from: https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
     // Retrieved on 3-2-20
@@ -168,9 +166,56 @@ class App extends Component{
       return time;
     }
 
+    
+    function UserProfile(props) {
+      const playerSummary = props.playerSummary;
+      const badges = props.badges;
+
+      // User doesn't exist so cannot get their summary
+      if(Object.keys(playerSummary).length === 0)
+      {
+        return(null);
+      }
+
+      if(playerSummary.steamid !== ""){
+        return(
+          <Card>
+            <Card.Img variant="top" src={playerSummary.avatarfull} />
+            <Card.Body>
+              <Card.Title>{playerSummary.personaname}</Card.Title>
+              <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile</Card.Link>
+              <Card.Text>
+                <UserPersonaState personastate={playerSummary.personastate}/>
+                Last Log Off: {timeConverter(playerSummary.lastlogoff)}
+                <br></br>
+                Profile Created: {timeConverter(playerSummary.timecreated)}
+                <br></br>
+                Player Level: {badges.player_level}
+                <br></br>
+                Exp Progress:     
+                       
+              </Card.Text>
+              <ProgressBar now={(badges.player_xp / (badges.player_xp + badges.player_xp_needed_to_level_up))*100} 
+                  label={badges.player_xp_needed_to_level_up + "\tneeded to level up"}/>   
+            </Card.Body>
+          </Card>
+        )
+      } else {
+        return(null);
+      }
+    }
+
     function FriendSummary(props) {
       const friendsSummary = props.friendsSummary;
 
+      // User doesn't exist so cannot get friends summaries
+      if(friendsSummary.length === 0)
+      {
+        return(null);
+      }
+
+      // User has friends to get summaries from, 
+      // otherwise return nothing
       if(friendsSummary[0].steamid !== "")
       {
         return(
@@ -186,13 +231,12 @@ class App extends Component{
                   {friendsSummary.map((friend, i) => {
                     return (
                       <React.Fragment key={i}>
-                        <div style={{border: "5px solid #007bff", "border-radius": "12px"}}>
+                        <div style={{border: "5px solid #007bff", "borderRadius": "12px"}}>
                           <Image alt="friend profile" src={friend.avatarfull}/>
                           <br></br>
                           <a href={friend.profileurl} target="_blank" rel="noopener noreferrer">{friend.personaname}</a>
                           <UserPersonaState personastate={friend.personastate}/>
                         </div>
-                        
                         <br></br>
                       </React.Fragment>
                     )
@@ -204,6 +248,58 @@ class App extends Component{
         )
       } else {
         return(null);
+      }
+    }
+
+    function WishlistGame(props) {
+      const game = props.game;
+      const appid = props.appid;
+      if(game.subs.length > 0)
+      {
+        return(
+          <React.Fragment>
+            <ListGroup.Item as="li">
+              <Image src={game.capsule} />
+              <a href={"https://store.steampowered.com/app/" + appid} target="_blank" rel="noopener noreferrer">{game.name}</a>
+              <br></br>
+              ${game.subs[0].price / 100}
+            </ListGroup.Item>
+          </React.Fragment>
+        )
+      } else {
+        return(null);
+      }
+    }
+
+    function Wishlist(props) {
+      const wishlist = props.wishlist;
+      
+      if(Object.keys(wishlist).length === 0)
+      {
+        return(null);
+      } else {
+        let wishlist_games = [];
+        let wishlist_appids = [];
+        for(const [key, value] of Object.entries(wishlist)) {
+          wishlist_games.push(value);
+          wishlist_appids.push(key);
+        }
+  
+        return (
+          <React.Fragment>
+            <AccordionComponent header="Wishlist" body={
+              <ListGroup as="ul" style={{overflow: 'auto', height: '500px'}} variant="flush">
+              {
+                  wishlist_games.map((game, i) => {
+                    return(
+                      <WishlistGame game={game} appid={wishlist_appids[i]} key={i}/>
+                    )
+                  })
+              }
+              </ListGroup>
+            }/>
+          </React.Fragment>
+        )
       }
     }
 
@@ -256,39 +352,6 @@ class App extends Component{
           null
         )
       }
-    }
-
-    function UserProfile(props) {
-      const playerSummary = props.playerSummary;
-      const badges = props.badges;
-
-      if(playerSummary.steamid !== ""){
-        return(
-          <Card>
-            <Card.Img variant="top" src={playerSummary.avatarfull} />
-            <Card.Body>
-              <Card.Title>{playerSummary.personaname}</Card.Title>
-              <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile</Card.Link>
-              <Card.Text>
-                <UserPersonaState personastate={playerSummary.personastate}/>
-                Last Log Off: {timeConverter(playerSummary.lastlogoff)}
-                <br></br>
-                Profile Created: {timeConverter(playerSummary.timecreated)}
-                <br></br>
-                Player Level: {badges.player_level}
-                <br></br>
-                Exp Progress:     
-                       
-              </Card.Text>
-              <ProgressBar now={(badges.player_xp / (badges.player_xp + badges.player_xp_needed_to_level_up))*100} 
-                  label={badges.player_xp_needed_to_level_up + "\tneeded to level up"}/>   
-            </Card.Body>
-          </Card>
-        )
-      } else {
-        return(null);
-      }
-      
     }
 
     function RecentlyPlayed(props) {
@@ -364,9 +427,10 @@ class App extends Component{
       )
     }
 
-    function TopTenOwnedGames(props) {
+    function TopTenOwnedGamesBar(props) {
       const games = props.games;
       const gameslist = props.gameslist;
+
       const ls = games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map(game => game.appid);
       const d = games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map((game) => game.playtime_forever);
       const game_names = new Array(10);
@@ -419,55 +483,24 @@ class App extends Component{
       )
     }
 
-    function WishlistGame(props) {
-      const game = props.game;
-      const appid = props.appid;
-      if(game.subs.length > 0)
+    function SteamStatistics(props) {
+      const playerSummary = props.playerSummary;
+      const recentlyPlayed = props.recentlyPlayed;
+      const ownedGames = props.ownedGames;
+      const gamesList = props.gamesList;
+
+      if(playerSummary.steamid !== "")
       {
         return(
-          <React.Fragment>
-            <ListGroup.Item as="li">
-              <Image src={game.capsule} />
-              <a href={"https://store.steampowered.com/app/" + appid} target="_blank" rel="noopener noreferrer">{game.name}</a>
-              <br></br>
-              ${game.subs[0].price / 100}
-            </ListGroup.Item>
-          </React.Fragment>
-        )
+          <AccordionComponent header="Steam Statistics" body={
+            <React.Fragment>
+              <RecentlyPlayedBar games={recentlyPlayed.games}/>
+              <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
+            </React.Fragment>
+          }/>
+        );
       } else {
         return(null);
-      }
-    }
-
-    function Wishlist(props) {
-      const wishlist = props.wishlist;
-      
-      if(Object.keys(wishlist).length === 0)
-      {
-        return(null);
-      } else {
-        let wishlist_games = [];
-        let wishlist_appids = [];
-        for(const [key, value] of Object.entries(wishlist)) {
-          wishlist_games.push(value);
-          wishlist_appids.push(key);
-        }
-  
-        return (
-          <React.Fragment>
-            <AccordionComponent header="Wishlist" body={
-              <ListGroup as="ul" style={{overflow: 'auto', height: '500px'}} variant="flush">
-              {
-                  wishlist_games.map((game, i) => {
-                    return(
-                      <WishlistGame game={game} appid={wishlist_appids[i]} key={i}/>
-                    )
-                  })
-              }
-              </ListGroup>
-            }/>
-          </React.Fragment>
-        )
       }
     }
 
@@ -498,7 +531,7 @@ class App extends Component{
         <Container>
           <h1>Steam Dash</h1>
           <Row>
-            <Col md lg="4">
+            <Col md lg>
               <Form onSubmit={this.handleSubmit}>
                   <InputGroup className="mb-1">
                     <FormControl placeholder="Steam Username" aria-label="Steam Username" onChange={e => this.setState({ userid: e.target.value })}/>
@@ -511,45 +544,31 @@ class App extends Component{
           </Row>
           <Row>
             <Col md lg="4">
-              <UserProfile playerSummary={this.state.playerSummary} badges={this.state.badges}/>
+              <UserProfile playerSummary={playerSummary} badges={badges}/>
             </Col>
             <Col md lg="3">
-              <FriendSummary /*playerSummary={this.state.playerSummary}*/ friendsSummary={this.state.friendsSummary}/>
+              <FriendSummary friendsSummary={friendsSummary}/>
             </Col>
             <Col md lg="5">
-              <Wishlist wishlist={this.state.wishlist} />
+              <Wishlist wishlist={wishlist} />
             </Col>
           </Row>
           <Row>
             <Col md lg="4">
                 <RecentlyPlayed recentlyPlayed={recentlyPlayed}/>
-                {/* <h2>Recently Played</h2>
-                <React.Fragment>
-                  {recentlyPlayed.games.map((game, i) => {
-                    return (
-                      <div key={i}>
-                        <Card >
-                          <Card.Img variant="top" src={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"} />
-                          <Card.Body>
-                            <Card.Title>{game.name}</Card.Title>
-                            <Card.Link href={"https://store.steampowered.com/app/" + game.appid + "/"} target="_blank">Steam Store Page</Card.Link>
-                          </Card.Body>
-                        </Card>
-                      </div>
-                    )
-                  })}
-                </React.Fragment> */}
             </Col>
           </Row>
           <Row>
             <Col>
               {/* Display the charts for recently played and top ten played owned games */}
-              <AccordionComponent header="Steam Statistics" body={
+              {/* <AccordionComponent header="Steam Statistics" body={
                 <React.Fragment>
-                  <RecentlyPlayedBar games={this.state.recentlyPlayed.games}/>
-                  <TopTenOwnedGames games={this.state.ownedGames.games} gameslist={this.state.gamesList}/>
+                  <RecentlyPlayedBar games={recentlyPlayed.games}/>
+                  <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
                 </React.Fragment>
-              }/>
+              }/> */}
+              <SteamStatistics playerSummary={playerSummary} recentlyPlayed={recentlyPlayed}
+                ownedGames={ownedGames} gamesList={gamesList}/>
             </Col>
           </Row>
         </Container>
