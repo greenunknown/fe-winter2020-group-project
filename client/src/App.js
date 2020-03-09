@@ -68,30 +68,45 @@ class App extends Component{
       body: JSON.stringify({ userId: this.state.userid }),
     });
       const data = await response.text();
+
+      // If the username entered is valid, resolve the data received.
+      //  Otherwise, setup the defaults for the page. This will make
+      //  elements not render since their data is not useful until a
+      //  valid user is entered.
       if(data !== "No match") 
       {
         var dataJSON = JSON.parse(data);
+        console.log("Data:", dataJSON);
+        // Set playerSummary data
         this.setState({playerSummary: dataJSON[0].response.players[0]})
+        // Set player friendsLists
         this.setState({friendsList: dataJSON[1].friendslist.friends});
+        // Set player's friendsSummary
         this.setState({friendsSummary: dataJSON[2].response.players})
+        // Set player's recently played to the received data if there was
+        //  a valid response.
         if (Object.keys(dataJSON[3].response).length === 0) {
           this.setState({recentlyPlayed: {total_count: 0, games: []}});
         } else {
           this.setState({recentlyPlayed: dataJSON[3].response});
         }
+        // Set player's ownedgames to the received data if there was
+        //  a valid response
         if (Object.keys(dataJSON[4].response).length === 0) {
-          this.setState({recentlyPlayed: {game_count: 0, games: []}});
+          this.setState({ownedGames: {game_count: 0, games: []}});
         } else {
           this.setState({ownedGames: dataJSON[4].response});
         }
+        // Set the gamesList
         this.setState({gamesList: dataJSON[5].applist.apps});
-        console.log(dataJSON[6]);
+        // Set the player's wishlist if the data recieved was valid
         if(dataJSON[6].success === 2)
         {
           this.setState({wishlist: {}});
         } else {
           this.setState({wishlist: dataJSON[6]});
         }
+        // Set player's badges
         this.setState({badges: dataJSON[7].response});
       } else {
         console.log("No match found!");
@@ -130,12 +145,12 @@ class App extends Component{
       }    
 
       console.log("playerSummary", this.state.playerSummary);
-      console.log(this.state.friendsList);
-      console.log(this.state.friendsSummary);
-      console.log(this.state.recentlyPlayed);
-      console.log(this.state.ownedGames);
-      console.log(this.state.wishlist);
-      console.log(this.state.badges);
+      console.log("friendsList", this.state.friendsList);
+      console.log("friendsSummary", this.state.friendsSummary);
+      console.log("recentlyPlayed", this.state.recentlyPlayed);
+      console.log("ownedGames", this.state.ownedGames);
+      console.log("wishlist:", this.state.wishlist);
+      console.log("badges:", this.state.badges);
       // console.log(this.state.gamesList);
   };
 
@@ -166,7 +181,8 @@ class App extends Component{
       return time;
     }
 
-    
+    // Description: Render the user's profile
+    // Props: playerSummary, badges
     function UserProfile(props) {
       const playerSummary = props.playerSummary;
       const badges = props.badges;
@@ -177,6 +193,7 @@ class App extends Component{
         return(null);
       }
 
+      // If user isn't the default user, render their profile
       if(playerSummary.steamid !== ""){
         return(
           <Card>
@@ -205,6 +222,8 @@ class App extends Component{
       }
     }
 
+    // Description: Render the user's friends' summaries
+    // Props: friendsSummary
     function FriendSummary(props) {
       const friendsSummary = props.friendsSummary;
 
@@ -251,6 +270,8 @@ class App extends Component{
       }
     }
 
+    // Description: Render a game given the game and appid
+    // Props: game, appid
     function WishlistGame(props) {
       const game = props.game;
       const appid = props.appid;
@@ -271,9 +292,12 @@ class App extends Component{
       }
     }
 
+    // Description: Render the player's wishlist
+    // Props: wishlist
     function Wishlist(props) {
       const wishlist = props.wishlist;
       
+      // Create the player's wishlist if possible
       if(Object.keys(wishlist).length === 0)
       {
         return(null);
@@ -303,6 +327,8 @@ class App extends Component{
       }
     }
 
+    // Description: Render a card to show a player's current status
+    // Props: personastate
     function UserPersonaState(props) {
       const personastate = props.personastate;
       if(personastate === 0) {
@@ -354,6 +380,8 @@ class App extends Component{
       }
     }
 
+    // Description: Render a list of the player's recently played games
+    // Props: recentlyPlayed
     function RecentlyPlayed(props) {
       const recentlyPlayed = props.recentlyPlayed;
 
@@ -380,9 +408,10 @@ class App extends Component{
       } else {
         return(null);
       }
-      
     }
 
+    // Description: Render the player's recently played games in the last two weeks
+    // Props:  games
     function RecentlyPlayedBar(props) {
       let games = props.games;
       let ls = games.map(game => game.name);
@@ -427,12 +456,17 @@ class App extends Component{
       )
     }
 
+    // Description: Render bar chart for top 10 most played games user owns
+    // Props: games, gameslist
     function TopTenOwnedGamesBar(props) {
       const games = props.games;
       const gameslist = props.gameslist;
 
+      // Sort games array in descending order, grab the top 10, and return an array of the appids
       const ls = games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map(game => game.appid);
+      // Sort games array in descending order, grab the top 10, and return an array of the playtime since they first played
       const d = games.sort((a,b) => {return b.playtime_forever - a.playtime_forever}).slice(0, 10).map((game) => game.playtime_forever);
+      // Loop through and create an array of matching game_names for each appid
       const game_names = new Array(10);
       for(let i = 0; i < gameslist.length; i++)
       {
@@ -483,13 +517,17 @@ class App extends Component{
       )
     }
 
+    // Description: Conditionally render user's recentlyPlayed and ownedGame 
+    //  playtime in charts.
+    // Props: playerSummary, recentlyPlayed, ownedGames, gamesList
     function SteamStatistics(props) {
       const playerSummary = props.playerSummary;
       const recentlyPlayed = props.recentlyPlayed;
       const ownedGames = props.ownedGames;
       const gamesList = props.gamesList;
 
-      if(playerSummary.steamid !== "")
+      // If the user exists, render their charts
+      if(playerSummary.steamid !== "" && ownedGames.game_count > 0)
       {
         return(
           <AccordionComponent header="Steam Statistics" body={
@@ -504,6 +542,8 @@ class App extends Component{
       }
     }
 
+    // Description: A component to make accordion elements easier to use.
+    // Props: header, body
     function AccordionComponent(props) {
       const header = props.header;
       const body = props.body;
@@ -526,12 +566,15 @@ class App extends Component{
         </React.Fragment>
       )
     }
+
+
     return (
       <div>
         <Container>
           <h1>Steam Dash</h1>
           <Row>
             <Col md lg>
+              {/* Submit form for searching for user to backend */}
               <Form onSubmit={this.handleSubmit}>
                   <InputGroup className="mb-1">
                     <FormControl placeholder="Steam Username" aria-label="Steam Username" onChange={e => this.setState({ userid: e.target.value })}/>
@@ -544,29 +587,27 @@ class App extends Component{
           </Row>
           <Row>
             <Col md lg="4">
+              {/* Display player summary */}
               <UserProfile playerSummary={playerSummary} badges={badges}/>
             </Col>
             <Col md lg="3">
+              {/* Display friends summaries */}
               <FriendSummary friendsSummary={friendsSummary}/>
             </Col>
             <Col md lg="5">
+              {/* Display wishlist */}
               <Wishlist wishlist={wishlist} />
             </Col>
           </Row>
           <Row>
             <Col md lg="4">
-                <RecentlyPlayed recentlyPlayed={recentlyPlayed}/>
+              {/* Display recently played Games*/}
+              <RecentlyPlayed recentlyPlayed={recentlyPlayed}/>
             </Col>
           </Row>
           <Row>
             <Col>
               {/* Display the charts for recently played and top ten played owned games */}
-              {/* <AccordionComponent header="Steam Statistics" body={
-                <React.Fragment>
-                  <RecentlyPlayedBar games={recentlyPlayed.games}/>
-                  <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
-                </React.Fragment>
-              }/> */}
               <SteamStatistics playerSummary={playerSummary} recentlyPlayed={recentlyPlayed}
                 ownedGames={ownedGames} gamesList={gamesList}/>
             </Col>
