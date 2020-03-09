@@ -10,7 +10,9 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
-import {Bar, Scatter, Linke, Pie} from 'react-chartjs-2';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Image from 'react-bootstrap/Image';
+import {Bar, Scatter, Pie} from 'react-chartjs-2';
 
 class App extends Component{
   // The state for the app contains data for a player. This data 
@@ -128,7 +130,7 @@ class App extends Component{
       console.log(this.state.ownedGames);
       console.log(this.state.wishlist);
       console.log(this.state.badges);
-      console.log(this.state.gamesList);
+      // console.log(this.state.gamesList);
   };
 
   handleSubmit(event) {
@@ -184,6 +186,77 @@ class App extends Component{
       ls = rp.map((gamen) => {})
 
 
+    }
+
+    function Wishlist_Game(props) {
+      const game = props.game;
+      if(game.subs.length > 0)
+      {
+        return(
+          <React.Fragment>
+            <ListGroup.Item as="li">
+              <Image src={game.capsule} />
+              {game.name}
+              <br></br>
+              ${game.subs[0].price / 100}
+            </ListGroup.Item>
+          </React.Fragment>
+        )
+      } else {
+        return(null);
+      }
+    }
+
+    function Wishlist(props) {
+      const wishlist = props.wishlist;
+      
+      if(wishlist.success == 2)
+      {
+        return(null);
+      } else {
+        let wishlist_games = [];
+        for(const [key, value] of Object.entries(wishlist)) {
+          wishlist_games.push(value);
+        }
+        wishlist_games.sort((a,b) => {return a.priority - b.priority});
+        console.log("Wishlist_games:", wishlist_games)
+  
+        return (
+          <React.Fragment>
+            <h2>Wishlist</h2>
+            {/* <ul style={{overflow:'auto', height: 'inherit', display: 'block', maxWidth: 300, marginLeft: 20}}>
+            {
+                wishlist_games.map((game, i) => {
+                  return(
+                    <Wishlist_Game game={game}/>
+                  )
+                })
+            }
+            </ul> */}
+            <ListGroup as="ul" style={{overflow: 'auto'}}>
+            {
+                wishlist_games.map((game, i) => {
+                  return(
+                    <Wishlist_Game game={game}/>
+                  )
+                })
+            }
+            </ListGroup>
+            {/* <ListGroup as="ul">
+              {
+                wishlist_games.map((game, i) => {
+                  <ListGroup.Item as="li" key={i}>
+                    {game.name}
+                    <br></br>
+                    {game.subs[0].price}
+                  </ListGroup.Item>
+                })
+              }
+            </ListGroup> */}
+          </React.Fragment>
+        )
+      }
+      
     }
 
     return (
@@ -267,6 +340,20 @@ class App extends Component{
                   </Card>
                 </Accordion>
               </div>
+            </Col>
+            <Col>
+              <Wishlist wishlist={this.state.wishlist} />
+              {/* <ListGroup as="ul">
+                {
+                  return (
+                  for(const [key, value] of Object.entries(this.state.wishlist)) {
+
+                  }
+                  )
+                
+
+                }
+              </ListGroup> */}
             </Col>
           </Row>
           <Row>
