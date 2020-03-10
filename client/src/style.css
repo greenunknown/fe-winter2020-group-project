@@ -29,11 +29,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* text-align: center; */
     margin: 0 auto;
-    /* padding: 150px 0; */
     transition: all 1s linear;
-    background-color: aqua;
+    /* background-color: aqua; */
 }
 
 .searchBarDiv form {
@@ -84,4 +82,10 @@ body {
     display: inline-block;
     width: 30rem;
     margin: 0 10px;
+}
+
+.errorMessage {
+    text-align: center;
+    background-color: #ea3232;
+    color: #ffffff;
 }

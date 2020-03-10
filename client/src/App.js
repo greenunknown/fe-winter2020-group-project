@@ -14,6 +14,8 @@ import {Bar, Scatter, Linke, Pie} from 'react-chartjs-2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import ClipLoader from "react-spinners/ClipLoader";
+import { DivWithErrorHandling } from './ErrorMessageDiv';
+
 
 import './style.css';
 
@@ -67,7 +69,7 @@ class App extends Component{
     landingPage: false,
     loading: false,
     matchFound: false,
-    showError: true
+    showError: false
   };
 
   shrinkSearchBar() {
@@ -86,16 +88,10 @@ class App extends Component{
     title.style.margin = "5px";
     title.style.fontSize = "20px";
     // title.style.margin = "30px";
-    searchDiv.style.alignSelf = "flex-start";
-    loadingDiv.style.alignSelf = "center";
+    title.style.alignSelf = "flex-start"
+    searchBar.style.alignSelf = "flex-start";
+    // loadingDiv.style.alignSelf = "center";
   }
-
-  displayError(error) {
-    var div = document.getElementById("searchBarDiv");
-    var errorText = document.createTextNode(error);
-    div.appendChild(errorText);
-  }
-
 
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
   callBackendAPI = async () => {
@@ -130,7 +126,8 @@ class App extends Component{
       }
 
       this.setState({matchFound: true});
-
+      this.setState({showError: false});
+      
       var dataJSON = JSON.parse(data);
       this.setState({playerSummary: dataJSON[0].response.players[0]})
       this.setState({friendsList: dataJSON[1].friendslist.friends});
@@ -159,39 +156,43 @@ class App extends Component{
       var mainDiv = document.getElementById("mainDiv");
       mainDiv.style.display = "block";
     } else {
+      
       this.setState({loading: false});
       this.setState({matchFound: false});
+      this.setState( {showError: true});
+    
       console.log("No match found!");
-      this.setState({playerSummary: [
-        {
-          steamid: "",
-          personaname: "",
-          profileurl: "#",
-          avatar: "",
-          avatarmedium: "",
-          avatarfull: "",
-          lastlogoff: 0,
-          timecreated: 0
-        }
-      ]});
-      this.setState({friendsList: []});
-      this.setState({friendsSummary: [
-        {
-          steamid: "",
-          personaname: "",
-          profileurl: "#",
-          avatar: "",
-          avatarmedium: "",
-          avatarfull: "",
-          lastlogoff: 0,
-          timecreated: 0
-        }
-      ]});
-      this.setState({recentlyPlayed: {total_count: 0, games: []}});
-      this.setState({ownedGames: {game_count: 0, games: []}});
-      this.setState({gamesList: []});
-      this.setState({wishlist: {}});
-      this.setState({badges: []});
+      return;
+      // this.setState({playerSummary: [
+      //   {
+      //     steamid: "",
+      //     personaname: "",
+      //     profileurl: "#",
+      //     avatar: "",
+      //     avatarmedium: "",
+      //     avatarfull: "",
+      //     lastlogoff: 0,
+      //     timecreated: 0
+      //   }
+      // ]});
+      // this.setState({friendsList: []});
+      // this.setState({friendsSummary: [
+      //   {
+      //     steamid: "",
+      //     personaname: "",
+      //     profileurl: "#",
+      //     avatar: "",
+      //     avatarmedium: "",
+      //     avatarfull: "",
+      //     lastlogoff: 0,
+      //     timecreated: 0
+      //   }
+      // ]});
+      // this.setState({recentlyPlayed: {total_count: 0, games: []}});
+      // this.setState({ownedGames: {game_count: 0, games: []}});
+      // this.setState({gamesList: []});
+      // this.setState({wishlist: {}});
+      // this.setState({badges: []});
     }
     
     this.setState({loading: false});
@@ -263,23 +264,25 @@ class App extends Component{
 
     return (
         <Container id="container">
-          <div className = "searchBarDiv" id="searchBarDiv">
-        
-            <h1 className="titleHeader" id="titleHeader">Steam Dash</h1>            
-              <Form onSubmit={this.handleSubmit}>
-                  <InputGroup className="mb-1">
-                    <FormControl className="searchBar" id="searchBar" placeholder="Steam Username" aria-label="Steam Username" onChange={e => this.setState({ userid: e.target.value })}/>
-                    <InputGroup.Append>
-                      <Button className="searchButton" type="Submit" value="Submit" variant="light" onClick={this.callBackendAPI} readOnly><FontAwesomeIcon icon={faSearch} color="black" /></Button>
-                    </InputGroup.Append>
-                  </InputGroup>
-              </Form>
-              
-              {/* For errors or loading wheel */}
-              <div className="loadingDiv" id="loadingDiv">
-                <ClipLoader size={80} color={"#555555"} loading={this.state.loading}/>
-              </div>
-          </div>
+          <DivWithErrorHandling showError={this.state.showError}>
+            <div className = "searchBarDiv" id="searchBarDiv">
+          
+              <h1 className="titleHeader" id="titleHeader">Steam Dash</h1>            
+                <Form onSubmit={this.handleSubmit}>
+                    <InputGroup className="mb-1">
+                      <FormControl className="searchBar" id="searchBar" placeholder="Steam Username" aria-label="Steam Username" onChange={e => this.setState({ userid: e.target.value })}/>
+                      <InputGroup.Append>
+                        <Button className="searchButton" type="Submit" value="Submit" variant="light" onClick={this.callBackendAPI} readOnly><FontAwesomeIcon icon={faSearch} color="black" /></Button>
+                      </InputGroup.Append>
+                    </InputGroup>
+                </Form>
+                
+                {/* For errors or loading wheel */}
+                <div className="loadingDiv" id="loadingDiv">
+                  <ClipLoader size={80} color={"#555555"} loading={this.state.loading}/>
+                </div>
+            </div>
+          </DivWithErrorHandling>
 
           <div className="mainDiv" id="mainDiv">
        
