@@ -73,7 +73,7 @@ body {
 .recentDiv {
     overflow: auto;
     white-space: nowrap;
-
+    /* border: #CED4DA solid 1px; */
 }
 .row {
     margin-bottom: 30px;

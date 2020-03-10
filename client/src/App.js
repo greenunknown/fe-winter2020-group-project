@@ -309,7 +309,6 @@ class App extends Component{
                               <li className="friendCell">
                               <img className="friendImg" alt="friend profile" src={friend.avatar}/>
                               <a href={friend.profileurl}>{friend.personaname}</a>
-                              
                               </li>
                           )
                         })}
