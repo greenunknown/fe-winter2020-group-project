@@ -529,14 +529,39 @@ class App extends Component{
       // If the user exists, render their charts
       if(playerSummary.steamid !== "" && ownedGames.game_count > 0)
       {
-        return(
-          <AccordionComponent header="Steam Statistics" body={
-            <React.Fragment>
-              <RecentlyPlayedBar games={recentlyPlayed.games}/>
-              <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
-            </React.Fragment>
-          }/>
-        );
+        if(ownedGames.game_count > 0 || recentlyPlayed.total_count > 0)
+        {
+          if(recentlyPlayed.total_count > 0 && ownedGames.game_count === 0)
+          {
+            return(
+              <AccordionComponent header="Steam Statistics" body={
+                <React.Fragment>
+                  <RecentlyPlayedBar games={recentlyPlayed.games}/>
+                </React.Fragment>
+              }/>
+            );
+          } else if(recentlyPlayed.total_count === 0 && ownedGames.game_count > 0) {
+            return(
+              <AccordionComponent header="Steam Statistics" body={
+                <React.Fragment>
+                  <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
+                </React.Fragment>
+              }/>
+            );
+          } else {
+            return(
+              <AccordionComponent header="Steam Statistics" body={
+                <React.Fragment>
+                  <RecentlyPlayedBar games={recentlyPlayed.games}/>
+                  <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
+                </React.Fragment>
+              }/>
+            );
+          }
+        } else {
+          return(null);
+        }
+        
       } else {
         return(null);
       }
@@ -569,7 +594,8 @@ class App extends Component{
 
 
     return (
-      <div>
+      // <div style={{backgroundImage: `url(https://images.unsplash.com/photo-1530813089459-29f31dd229c2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1267&q=80)`}}>
+      <div style={{backgroundImage: `linear-gradient(to top, #96e6a1 0%, #30cfd0 100%)`}}>
         <Container>
           <h1>Steam Dash</h1>
           <Row>
