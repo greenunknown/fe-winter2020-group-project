@@ -74,11 +74,11 @@ class App extends Component{
 
   shrinkSearchBar() {
     var searchDiv = document.getElementById("searchBarDiv");   
-    var searchBar = document.getElementById("searchBar");
+    var searchForm = document.getElementById("searchForm");
     var title = document.getElementById("titleHeader");
     var loadingDiv = document.getElementById("loadingDiv");
 
-    searchDiv.style.width= "30%";
+    // searchDiv.style.width= "30%";
     searchDiv.style.padding = "0px";
     searchDiv.style.margin = "0px";
     searchDiv.style.marginBottom = "50px";
@@ -88,8 +88,10 @@ class App extends Component{
     title.style.margin = "5px";
     title.style.fontSize = "20px";
     // title.style.margin = "30px";
-    title.style.alignSelf = "flex-start"
-    searchBar.style.alignSelf = "flex-start";
+    title.style.alignSelf = "flex-start";
+    searchForm.style.width = "30%";
+    searchForm.style.height = "10%";
+    searchForm.style.alignSelf = "flex-start";
     // loadingDiv.style.alignSelf = "center";
   }
 
@@ -268,19 +270,15 @@ class App extends Component{
             <div className = "searchBarDiv" id="searchBarDiv">
           
               <h1 className="titleHeader" id="titleHeader">Steam Dash</h1>            
-                <Form onSubmit={this.handleSubmit}>
+                <Form id="searchForm" onSubmit={this.handleSubmit}>
                     <InputGroup className="mb-1">
                       <FormControl className="searchBar" id="searchBar" placeholder="Steam Username" aria-label="Steam Username" onChange={e => this.setState({ userid: e.target.value })}/>
                       <InputGroup.Append>
                         <Button className="searchButton" type="Submit" value="Submit" variant="light" onClick={this.callBackendAPI} readOnly><FontAwesomeIcon icon={faSearch} color="black" /></Button>
                       </InputGroup.Append>
+                      <ClipLoader size={50} color={"#555555"} loading={this.state.loading}/>
                     </InputGroup>
                 </Form>
-                
-                {/* For errors or loading wheel */}
-                <div className="loadingDiv" id="loadingDiv">
-                  <ClipLoader size={80} color={"#555555"} loading={this.state.loading}/>
-                </div>
             </div>
           </DivWithErrorHandling>
 
