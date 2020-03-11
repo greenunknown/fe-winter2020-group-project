@@ -82,6 +82,7 @@ body {
 .recentGameCards {
     display: inline-block;
     width: 30rem;
+    height: 100%;
     margin: 0 10px;
 }
 
