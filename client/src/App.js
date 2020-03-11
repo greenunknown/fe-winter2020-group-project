@@ -16,7 +16,7 @@ import Image from 'react-bootstrap/Image';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import {Bar, Scatter, Pie} from 'react-chartjs-2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faLink, faUserFriends } from '@fortawesome/free-solid-svg-icons'
 import ClipLoader from "react-spinners/ClipLoader";
 import { DivWithErrorHandling } from './ErrorMessageDiv';
 
@@ -84,6 +84,7 @@ class App extends Component{
 
     title.style.margin = "5px";
     title.style.fontSize = "20px";
+    title.style.fontWeight = "bolder";
     // title.style.margin = "30px";
     title.style.alignSelf = "flex-start";
     searchForm.style.width = "30%";
@@ -255,6 +256,10 @@ class App extends Component{
     function UserProfile(props) {
       const playerSummary = props.playerSummary;
       const badges = props.badges;
+      const fontStyle = {
+        fontSize: "30px",
+        fontWeight: "bold"
+      };
 
       // User doesn't exist so cannot get their summary
       if(Object.keys(playerSummary).length === 0)
@@ -268,8 +273,8 @@ class App extends Component{
           <Card>
             <Card.Img variant="top" src={playerSummary.avatarfull} />
             <Card.Body>
-              <Card.Title>{playerSummary.personaname}</Card.Title>
-              <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile</Card.Link>
+              <Card.Title style={fontStyle}>{playerSummary.personaname}</Card.Title>
+              <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile <FontAwesomeIcon icon={faLink} color="black" /></Card.Link>
               <Card.Text>
                 <UserPersonaState personastate={playerSummary.personastate}/>
                 Last Log Off: {timeConverter(playerSummary.lastlogoff)}
@@ -318,14 +323,13 @@ class App extends Component{
                 <Card.Body style={{overflow: 'auto', height: '500px'}}>
                   {friendsSummary.map((friend, i) => {
                     return (
-                      <React.Fragment key={i}>
-                        <div style={{border: "5px solid #007bff", "borderRadius": "12px"}}>
+                      <React.Fragment>
+                        <Card key={i} className="friendCard">
                           <Image alt="friend profile" src={friend.avatarfull}/>
                           <br></br>
                           <a href={friend.profileurl} target="_blank" rel="noopener noreferrer">{friend.personaname}</a>
                           <UserPersonaState personastate={friend.personastate}/>
-                        </div>
-                        <br></br>
+                          </Card>
                       </React.Fragment>
                     )
                     })}
@@ -457,22 +461,32 @@ class App extends Component{
       if(recentlyPlayed.total_count > 0)
       {
         return(
-          <React.Fragment>
-            <h2>Recently Played</h2>
-            <div className="recentDiv">
-            {recentlyPlayed.games.map((game, i) => {
-              return (
-                  <Card key={i} className="recentGameCards">
-                    <Card.Img variant="top" src={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"} />
-                    <Card.Body>
-                      <Card.Title>{game.name}</Card.Title>
-                      <Card.Link href={"https://store.steampowered.com/app/" + game.appid + "/"} target="_blank">Steam Store Page</Card.Link>
-                    </Card.Body>
-                  </Card>
-              )
-            })}
-            </div>
-          </React.Fragment>
+          <Accordion defaultActionKey="1">
+            <Card>
+              <Card.Header>
+                <Accordion.Toggle as={Button} variant="link" eventKey="1">Recently Played</Accordion.Toggle>
+              </Card.Header>
+
+              <Accordion.Collapse eventKey="1">
+                <React.Fragment>
+                  <div className="recentDiv">
+                  {recentlyPlayed.games.map((game, i) => {
+                    return (
+                        <Card key={i} className="recentGameCards">
+                          <Card.Img variant="top" src={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"} />
+                          <Card.Body>
+                            <Card.Title>{game.name}</Card.Title>
+                            <Card.Link href={"https://store.steampowered.com/app/" + game.appid + "/"} target="_blank">Steam Store Page</Card.Link>
+                          </Card.Body>
+                        </Card>
+                    )
+                  })}
+                  </div>
+                </React.Fragment>
+              </Accordion.Collapse>
+            </Card>
+          </Accordion>
+
         );
       } else {
         return(null);
