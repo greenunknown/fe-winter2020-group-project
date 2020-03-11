@@ -33,7 +33,7 @@ export const UserProfile = (props) => {
     // If user isn't the default user, render their profile
     if(playerSummary.steamid !== ""){
         return(
-        <Card>
+        <Card className="userProfile">
             <Card.Img variant="top" src={playerSummary.avatarfull} />
             <Card.Body>
             <Card.Title style={fontStyle}>{playerSummary.personaname}</Card.Title>
@@ -77,13 +77,13 @@ export const FriendSummary = (props) => {
         return(
         <Accordion defaultActiveKey="1" className="friendsAccordion">
             <Card className="friendsContainer">
-            <Card.Header>
+            <Card.Header className="accordionHeader">
                 <Accordion.Toggle as={Button} variant="link" eventKey="1">
                 Friends
                 </Accordion.Toggle>
             </Card.Header>
             <Accordion.Collapse eventKey="1">
-                <Card.Body style={{overflow: 'auto', height: '500px'}}>
+                <Card.Body className="friendsSummaryBody" style={{overflow: 'auto', height: '500px'}}>
                 {friendsSummary.map((friend, i) => {
                     return (
                     <React.Fragment>
@@ -116,7 +116,7 @@ export const WishlistGame = (props) => {
     {
         return(
         <React.Fragment>
-            <ListGroup.Item as="li">
+            <ListGroup.Item as="li" className="wishlistGame">
             <Image src={game.capsule} />
             <br></br>
             <a href={"https://store.steampowered.com/app/" + appid} target="_blank" rel="noopener noreferrer">{game.name}</a>
@@ -150,7 +150,7 @@ export const Wishlist = (props) => {
         return (
         <React.Fragment>
             <AccordionComponent className="wishAccordion" header="Wishlist" body={
-            <ListGroup style={{overflow: 'auto', height: '500px'}} as="ul" variant="flush">
+            <ListGroup className="wishlistBody" /*style={{overflow: 'auto', height: '500px'}}*/ as="ul" variant="flush">
             {
                 wishlist_games.map((game, i) => {
                     return(
@@ -228,8 +228,8 @@ export const RecentlyPlayed = (props) => {
     {
         return(
         <Accordion defaultActiveKey="0">
-            <Card>
-            <Card.Header>
+            <Card className="recentCard">
+            <Card.Header classNae="accordionHeader">
                 <Accordion.Toggle as={Button} variant="link" eventKey="0">Recently Played</Accordion.Toggle>
             </Card.Header>
 
@@ -291,14 +291,18 @@ export const RecentlyPlayedBar= (props) => {
             }
         }
         options={{
-            title:{
-            display:true,
-            text:'Recently Played Games',
-            fontSize:20
+                title:{
+                display:true,
+                text:'Recently Played Games',
+                fontSize:20,
+                fontColor: 'black'
             },
             legend:{
-            display:true,
-            position:'right'
+                labels: {
+                    fontColor: 'black'
+                },
+                display:true,
+                position:'right'
             }
         }}
         />
@@ -356,9 +360,13 @@ export const TopTenOwnedGamesBar = (props) => {
             title:{
             display:true,
             text:'Top 10 Owned Games Playtime',
-            fontSize:20
+            fontSize:20,
+            fontColor: 'black'
             },
             legend:{
+                labels: {
+                    fontColor: 'black'
+                },
             display:true,
             position:'right'
             }
@@ -425,13 +433,13 @@ export const AccordionComponent = (props) => {
         <React.Fragment>
         <Accordion defaultActiveKey="0">
             <Card>
-            <Card.Header>
+            <Card.Header className="accordionHeader">
                 <Accordion.Toggle as={Button} variant="link" eventKey="0">
                 {header}
                 </Accordion.Toggle>
             </Card.Header>
             <Accordion.Collapse eventKey="0">
-                <Card.Body>
+                <Card.Body className="accordionBody">
                 {body}
                 </Card.Body>
             </Accordion.Collapse>
