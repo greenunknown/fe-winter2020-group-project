@@ -348,12 +348,14 @@ class App extends Component{
     function WishlistGame(props) {
       const game = props.game;
       const appid = props.appid;
+
       if(game.subs.length > 0)
       {
         return(
           <React.Fragment>
             <ListGroup.Item as="li">
               <Image src={game.capsule} />
+              <br></br>
               <a href={"https://store.steampowered.com/app/" + appid} target="_blank" rel="noopener noreferrer">{game.name}</a>
               <br></br>
               ${game.subs[0].price / 100}
@@ -404,6 +406,7 @@ class App extends Component{
     // Props: personastate
     function UserPersonaState(props) {
       const personastate = props.personastate;
+      
       if(personastate === 0) {
         return(
           <Card bg='light' text='dark'>
@@ -461,13 +464,13 @@ class App extends Component{
       if(recentlyPlayed.total_count > 0)
       {
         return(
-          <Accordion defaultActionKey="1">
+          <Accordion defaultActiveKey="0">
             <Card>
               <Card.Header>
-                <Accordion.Toggle as={Button} variant="link" eventKey="1">Recently Played</Accordion.Toggle>
+                <Accordion.Toggle as={Button} variant="link" eventKey="0">Recently Played</Accordion.Toggle>
               </Card.Header>
 
-              <Accordion.Collapse eventKey="1">
+              <Accordion.Collapse eventKey="0">
                 <React.Fragment>
                   <div className="recentDiv">
                   {recentlyPlayed.games.map((game, i) => {
