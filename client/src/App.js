@@ -615,14 +615,38 @@ class App extends Component{
       // If the user exists, render their charts
       if(playerSummary.steamid !== "" && ownedGames.game_count > 0)
       {
-        return(
-          <AccordionComponent header="Steam Statistics" body={
-            <React.Fragment>
-              <RecentlyPlayedBar games={recentlyPlayed.games}/>
-              <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
-            </React.Fragment>
-          }/>
-        );
+        if(ownedGames.game_count > 0 || recentlyPlayed.total_count > 0)
+        {
+          if(recentlyPlayed.total_count > 0 && ownedGames.game_count === 0)
+          {
+            return(
+              <AccordionComponent header="Steam Statistics" body={
+                <React.Fragment>
+                  <RecentlyPlayedBar games={recentlyPlayed.games}/>
+                </React.Fragment>
+              }/>
+            );
+          } else if(recentlyPlayed.total_count === 0 && ownedGames.game_count > 0) {
+            return(
+              <AccordionComponent header="Steam Statistics" body={
+                <React.Fragment>
+                  <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
+                </React.Fragment>
+              }/>
+            );
+          } else {
+            return(
+              <AccordionComponent header="Steam Statistics" body={
+                <React.Fragment>
+                  <RecentlyPlayedBar games={recentlyPlayed.games}/>
+                  <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
+                </React.Fragment>
+              }/>
+            );
+          }
+        } else {
+          return(null);
+        }
       } else {
         return(null);
       }
