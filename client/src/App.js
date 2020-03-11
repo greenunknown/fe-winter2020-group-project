@@ -10,10 +10,17 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
+
 import ListGroup from 'react-bootstrap/ListGroup';
 import Image from 'react-bootstrap/Image';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import {Bar, Scatter, Pie} from 'react-chartjs-2';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import ClipLoader from "react-spinners/ClipLoader";
+import { DivWithErrorHandling } from './ErrorMessageDiv';
+
+import './style.css';
 
 class App extends Component{
   // The state for the app contains data for a player. This data 
@@ -55,18 +62,60 @@ class App extends Component{
       player_xp: 0,
       player_level: 0,
       player_xp_needed_to_level_up: 0.0000000001
-    }
+    },
+    landingPage: false,
+    loading: false,
+    matchFound: false,
+    showError: false
   };
- 
+
+  shrinkSearchBar() {
+    var searchDiv = document.getElementById("searchBarDiv");   
+    var searchForm = document.getElementById("searchForm");
+    var title = document.getElementById("titleHeader");
+    var loadingDiv = document.getElementById("loadingDiv");
+
+    // searchDiv.style.width= "30%";
+    searchDiv.style.padding = "0px";
+    searchDiv.style.margin = "0px";
+    searchDiv.style.marginBottom = "50px";
+    
+    searchDiv.style.height= "10%";
+
+    title.style.margin = "5px";
+    title.style.fontSize = "20px";
+    // title.style.margin = "30px";
+    title.style.alignSelf = "flex-start";
+    searchForm.style.width = "30%";
+    searchForm.style.height = "10%";
+    searchForm.style.alignSelf = "flex-start";
+    // loadingDiv.style.alignSelf = "center";
+  }
+
   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
   callBackendAPI = async () => {
-    const response = await fetch('http://localhost:5000/search', {
+
+    var response = '';
+    
+    var searchBar = document.getElementById("searchBar");
+
+    if(searchBar.value !== ''){
+      this.setState({loading: true});
+    }
+
+    try {
+      response = await fetch('http://localhost:5000/search', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ userId: this.state.userid }),
-    });
+      });
+    } catch(err) {
+      this.setState({loading: false});
+      return;
+    }
+
       const data = await response.text();
 
       // If the username entered is valid, resolve the data received.
@@ -75,6 +124,16 @@ class App extends Component{
       //  valid user is entered.
       if(data !== "No match") 
       {
+        if(!this.landingPage) {
+          this.shrinkSearchBar();
+        }
+
+      this.setState({matchFound: true});
+      this.setState({loading: false});
+      this.setState({showError: false});
+        
+        
+        
         var dataJSON = JSON.parse(data);
         console.log("Data:", dataJSON);
         // Set playerSummary data
@@ -109,40 +168,50 @@ class App extends Component{
         // Set player's badges
         this.setState({badges: dataJSON[7].response});
       } else {
-        console.log("No match found!");
-        this.setState({playerSummary: {
-            steamid: "",
-            personaname: "",
-            profileurl: "#",
-            avatar: "",
-            avatarmedium: "",
-            avatarfull: "",
-            lastlogoff: 0,
-            timecreated: 0
-        }});
-        this.setState({friendsList: []});
-        this.setState({friendsSummary: [
-          {
-            steamid: "",
-            personaname: "",
-            profileurl: "#",
-            avatar: "",
-            avatarmedium: "",
-            avatarfull: "",
-            lastlogoff: 0,
-            timecreated: 0
-          }
-        ]});
-        this.setState({recentlyPlayed: {total_count: 0, games: []}});
-        this.setState({ownedGames: {game_count: 0, games: []}});
-        this.setState({gamesList: []});
-        this.setState({wishlist: {}});
-        this.setState({badges: {
-          player_xp: 0,
-          player_level: 0,
-          player_xp_needed_to_level_up: 0.0000000001
-        }});
-      }    
+      
+      this.setState({loading: false});
+      this.setState({matchFound: false});
+      this.setState( {showError: true});
+   
+      console.log("No match found!");
+      return;
+//       this.setState({playerSummary: [
+//         {
+//           steamid: "",
+//           personaname: "",
+//           profileurl: "#",
+//           avatar: "",
+//           avatarmedium: "",
+//           avatarfull: "",
+//           lastlogoff: 0,
+//           timecreated: 0
+//         }
+//       ]});
+//       this.setState({friendsList: []});
+//       this.setState({friendsSummary: [
+//         {
+//           steamid: "",
+//           personaname: "",
+//           profileurl: "#",
+//           avatar: "",
+//           avatarmedium: "",
+//           avatarfull: "",
+//           lastlogoff: 0,
+//           timecreated: 0
+//         }
+//       ]});
+//       this.setState({recentlyPlayed: {total_count: 0, games: []}});
+//       this.setState({ownedGames: {game_count: 0, games: []}});
+//       this.setState({gamesList: []});
+//       this.setState({wishlist: {}});
+//       this.setState({badges: []});
+
+//       this.setState({badges: {
+//         player_xp: 0,
+//         player_level: 0,
+//         player_xp_needed_to_level_up: 0.0000000001
+//       }});
+    }    
 
       console.log("playerSummary", this.state.playerSummary);
       console.log("friendsList", this.state.friendsList);
@@ -568,28 +637,29 @@ class App extends Component{
     }
 
 
-    return (
-      <div>
-        <Container>
-          <h1>Steam Dash</h1>
-          <Row>
-            <Col md lg>
-              {/* Submit form for searching for user to backend */}
-              <Form onSubmit={this.handleSubmit}>
-                  <InputGroup className="mb-1">
-                    <FormControl placeholder="Steam Username" aria-label="Steam Username" onChange={e => this.setState({ userid: e.target.value })}/>
-                    <InputGroup.Append>
-                      <Button type="Submit" value="Submit" onClick={this.callBackendAPI} readOnly>Submit</Button>
-                    </InputGroup.Append>
-                  </InputGroup>
-              </Form>
-            </Col>
-          </Row>
+     return (
+        <Container id="container">
+          <DivWithErrorHandling showError={this.state.showError}>
+            <div className = "searchBarDiv" id="searchBarDiv">
+          
+              <h1 className="titleHeader" id="titleHeader">Steam Dash</h1>            
+                <Form id="searchForm" onSubmit={this.handleSubmit}>
+                    <InputGroup className="mb-1">
+                      <FormControl className="searchBar" id="searchBar" placeholder="Steam Username" aria-label="Steam Username" onChange={e => this.setState({ userid: e.target.value })}/>
+                      <InputGroup.Append>
+                        <Button className="searchButton" type="Submit" value="Submit" variant="light" onClick={this.callBackendAPI} readOnly><FontAwesomeIcon icon={faSearch} color="black" /></Button>
+                      </InputGroup.Append>
+                      <ClipLoader size={50} color={"#555555"} loading={this.state.loading}/>
+                    </InputGroup>
+                </Form>
+            </div>
+          </DivWithErrorHandling>            
           <Row>
             <Col md lg="4">
               {/* Display player summary */}
               <UserProfile playerSummary={playerSummary} badges={badges}/>
             </Col>
+
             <Col md lg="3">
               {/* Display friends summaries */}
               <FriendSummary friendsSummary={friendsSummary}/>
@@ -613,7 +683,6 @@ class App extends Component{
             </Col>
           </Row>
         </Container>
-      </div>
     );
   }
 }

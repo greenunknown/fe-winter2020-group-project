@@ -1,0 +1,93 @@
+html {
+    height: 100%;
+}
+
+body {
+    font-family: 'Oxygen', sans-serif;
+    height: 100%;
+}
+
+#root {
+    height: 100%;
+}
+
+.container {
+    /* background-color: #eeeeee; */
+    margin: auto auto;
+    padding: 0;
+}
+
+.titleHeader {
+    /* color: #444444; */
+    font-size: 4em;
+    margin-top: 30px;
+    margin-bottom: 60px;
+    transition: all 1s linear;
+}
+
+.searchBarDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    transition: all 1s linear;
+    /* background-color: aqua; */
+}
+
+.searchBarDiv form {
+    width: 60%;
+    display: inline-block;
+}
+
+.searchBar {
+    font-size: 1em;
+    padding: 30px 20px;
+}
+
+
+.searchButton {
+    border-color: #CED4DA;
+    border-left: 0;
+}
+
+.mainDiv {
+    display: none;
+}
+
+.friendsList {
+    overflow: auto;
+    height: 460px;
+    list-style-type: none;
+    border: #CED4DA solid 1px;
+    padding: 0px;
+}
+
+.friendCell {
+    padding: 10px 10px;
+}
+
+.friendImg {
+    padding: 5px 10px;
+}
+
+.recentDiv {
+    overflow: auto;
+    white-space: nowrap;
+    /* border: #CED4DA solid 1px; */
+}
+.row {
+    margin-bottom: 30px;
+}
+
+.recentGameCards {
+    display: inline-block;
+    width: 30rem;
+    margin: 0 10px;
+}
+
+.errorMessage {
+    text-align: center;
+    background-color: #ea3232;
+    color: #ffffff;
+    width: 100%;
+}
