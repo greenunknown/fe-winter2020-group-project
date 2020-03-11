@@ -459,19 +459,19 @@ class App extends Component{
         return(
           <React.Fragment>
             <h2>Recently Played</h2>
+            <div className="recentDiv">
             {recentlyPlayed.games.map((game, i) => {
               return (
-                <div key={i}>
-                  <Card >
+                  <Card key={i} className="recentGameCards">
                     <Card.Img variant="top" src={"http://media.steampowered.com/steamcommunity/public/images/apps/" + game.appid + "/" + game.img_logo_url + ".jpg"} />
                     <Card.Body>
                       <Card.Title>{game.name}</Card.Title>
                       <Card.Link href={"https://store.steampowered.com/app/" + game.appid + "/"} target="_blank">Steam Store Page</Card.Link>
                     </Card.Body>
                   </Card>
-                </div>
               )
             })}
+            </div>
           </React.Fragment>
         );
       } else {
@@ -670,7 +670,7 @@ class App extends Component{
             </Col>
           </Row>
           <Row>
-            <Col md lg="4">
+            <Col md lg="12">
               {/* Display recently played Games*/}
               <RecentlyPlayed recentlyPlayed={recentlyPlayed}/>
             </Col>
