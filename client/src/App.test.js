@@ -1,14 +1,21 @@
 import React from 'react';
-import App from './App';
+import AppSingleton, {App} from './App';
 
 import {render, fireEvent, screen} from '@testing-library/react'
 import "@testing-library/jest-dom/extend-expect";
 
 it('renders without crashing', () => {
-    const {getByText} = render(<App />)
-    
-    expect(getByText('Steam Dash')).toBeInTheDocument()
+    const {getByText} = render(<AppSingleton />)
   })
+
+it('main page has title Steam Dash', () => {
+  const {getByText} = render(<App />)
+  expect(getByText('Steam Dash')).toBeInTheDocument()
+})
+
+it('UserProfile component displays correct information', () => {
+  const {getByText} = render(<UserProfile />);
+})
 
 
 // it('test test', () => {
