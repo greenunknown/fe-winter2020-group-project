@@ -312,8 +312,8 @@ class App extends Component{
       if(friendsSummary[0].steamid !== "")
       {
         return(
-          <Accordion defaultActiveKey="1">
-            <Card>
+          <Accordion defaultActiveKey="1" className="friendsAccordion">
+            <Card className="friendsContainer">
               <Card.Header>
                 <Accordion.Toggle as={Button} variant="link" eventKey="1">
                   Friends
@@ -386,8 +386,8 @@ class App extends Component{
   
         return (
           <React.Fragment>
-            <AccordionComponent header="Wishlist" body={
-              <ListGroup as="ul" style={{overflow: 'auto', height: '500px'}} variant="flush">
+            <AccordionComponent className="wishAccordion" header="Wishlist" body={
+              <ListGroup style={{overflow: 'auto', height: '500px'}} as="ul" variant="flush">
               {
                   wishlist_games.map((game, i) => {
                     return(
@@ -671,7 +671,7 @@ class App extends Component{
                 </Form>
             </div>
           </DivWithErrorHandling>            
-          <Row>
+          <Row className="middleDiv">
             <Col md lg="4">
               {/* Display player summary */}
               <UserProfile playerSummary={playerSummary} badges={badges}/>
