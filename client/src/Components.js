@@ -86,7 +86,7 @@ export const FriendSummary = (props) => {
                 </Accordion.Toggle>
             </Card.Header>
             <Accordion.Collapse eventKey="1">
-                <Card.Body className="friendsSummaryBody" style={{overflow: 'auto', height: '500px'}}>
+                <Card.Body className="friendsSummaryBody" style={{overflow: 'auto', height: '620px'}}>
                 {friendsSummary.map((friend, i) => {
                     return (
                     <React.Fragment>
@@ -153,7 +153,7 @@ export const Wishlist = (props) => {
 
         return (
         <React.Fragment>
-            <AccordionComponent className="wishAccordion" header="Wishlist" body={
+            <AccordionComponent classname="wishAccordion" header="Wishlist" body={
             <ListGroup className="wishlistBody" /*style={{overflow: 'auto', height: '500px'}}*/ as="ul" variant="flush">
             {
                 wishlist_games.map((game, i) => {
@@ -231,7 +231,7 @@ export const RecentlyPlayed = (props) => {
     if(recentlyPlayed.total_count > 0)
     {
         return(
-        <Accordion defaultActiveKey="0">
+        <Accordion className="recentAccordion" defaultActiveKey="0">
             <Card className="recentCard">
             <Card.Header className="accordionHeader">
                 <Accordion.Toggle as={Button} variant="link" eventKey="0">
@@ -438,7 +438,7 @@ export const SteamStatistics = (props) => {
         if(recentlyPlayed.total_count > 0 && ownedGames.game_count === 0)
         {
             return(
-            <AccordionComponent header="Steam Statistics" body={
+            <AccordionComponent classname="statAccordion" header="Steam Statistics" body={
                 <React.Fragment>
                 <RecentlyPlayedBar games={recentlyPlayed.games}/>
                 </React.Fragment>
@@ -446,7 +446,7 @@ export const SteamStatistics = (props) => {
             );
         } else if(recentlyPlayed.total_count === 0 && ownedGames.game_count > 0) {
             return(
-            <AccordionComponent header="Steam Statistics" body={
+            <AccordionComponent classname="statAccordion" header="Steam Statistics" body={
                 <React.Fragment>
                 <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
                 </React.Fragment>
@@ -454,7 +454,7 @@ export const SteamStatistics = (props) => {
             );
         } else {
             return(
-            <AccordionComponent header="Steam Statistics" body={
+            <AccordionComponent classname="statAccordion" header="Steam Statistics" body={
                 <React.Fragment>
                 <RecentlyPlayedBar games={recentlyPlayed.games}/>
                 <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
@@ -475,11 +475,13 @@ export const SteamStatistics = (props) => {
 export const AccordionComponent = (props) => {
     const header = props.header;
     const body = props.body;
+    const classname = props.classname;
+
     return (
         <React.Fragment>
-        <Accordion defaultActiveKey="0">
+        <Accordion className={classname} defaultActiveKey="0">
             <Card>
-            <Card.Header className="accordionHeader">
+            <Card.Header>
                 <Accordion.Toggle as={Button} variant="link" eventKey="0">
                 <span>{header} <FontAwesomeIcon icon={faChevronDown} color="#00DFAB" /></span>
                 </Accordion.Toggle>

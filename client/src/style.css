@@ -60,7 +60,6 @@ body {
     overflow: auto;
     height: 460px;
     list-style-type: none;
-    border: #CED4DA solid 1px;
     padding: 0px;
 }
 
@@ -77,6 +76,15 @@ body {
     white-space: nowrap;
     padding: 20px 0px;
 }
+
+.recentDiv img {
+    border-radius: 50px;
+}
+
+.recentDiv .card {
+    border-radius: 50px;
+}
+
 .row {
     margin-bottom: 30px;
 }
@@ -126,7 +134,7 @@ body {
 .userProfile, .wishlistGame {
     background-color: #242C45;
     border-radius: 20px;
-    color:#ecf0f1
+    color:#ecf0f1;
 }
 
 .wishlistGame a:hover {
@@ -135,6 +143,7 @@ body {
 
 .userProfile {
     text-align: center;
+    box-shadow: 5px 5px #12172A;
 }
 .userProfile a:hover {
     color: #00DFAB;
@@ -181,17 +190,38 @@ body {
     background-color: #242C45;;
 }
 
+.friendsAccordion > .card, .wishAccordion > .card, .recentAccordion > .card, .statAccordion > .card  {
+    box-shadow: 5px 5px #12172A;
+    border-radius: 25px;
+}
+
 .friendsSummaryBody a:hover {
     color: #00DFAB;
     font-weight: bolder;
 }
 
+.wishAccordion .card-header {
+    background-color: #0E1425;
+}
+
+.wishAccordion .card-header > button, .statAccordion .card-header > button{
+    color: white;
+}
+
+.wishAccordion .card-header > button:hover, .accordionHeader button:hover, .statAccordion button:hover {
+    color: #00DFAB;
+}
+
 .wishlistBody {
     overflow: auto;
-    height: 500px;
+    height: 580px;
 }
 
 .accordionHeader {
+    background-color: #0E1425;
+}
+
+.statAccordion .card-header {
     background-color: #0E1425;
 }
 
@@ -200,10 +230,6 @@ body {
     font-weight: bolder;
 }
 
-.accordionHeader button:hover {
-    color: #00DFAB;
-}
-
-.canvas {
-    color: white;
+.card {
+    border-color: #171E33;
 }
