@@ -97,8 +97,6 @@ async function getSteamId(usersteamname, response) {
         // Get player's badges
         let badges = await getJSON('http://api.steampowered.com/IPlayerService/GetBadges/v1/?key=' + key + '&steamid=' + usersteamid);
         console.log("badges", badges);
-
-        // console.log(ownedGames.response.games);
         
         // Package and send the data
         let data = [playerSum, friends, friendsSum, recentlyPlayed, ownedGames, gameslist, wishlist, badges];

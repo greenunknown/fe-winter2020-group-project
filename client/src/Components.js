@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLink } from '@fortawesome/free-solid-svg-icons'
+import { faLink, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 
 import ListGroup from 'react-bootstrap/ListGroup';
 import Image from 'react-bootstrap/Image';
@@ -37,20 +37,23 @@ export const UserProfile = (props) => {
             <Card.Img variant="top" src={playerSummary.avatarfull} />
             <Card.Body>
             <Card.Title id="personName" style={fontStyle}>{playerSummary.personaname}</Card.Title>
-            <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile <FontAwesomeIcon icon={faLink} color="black" /></Card.Link>
+            <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile <FontAwesomeIcon icon={faLink} color="#ecf0f1" /></Card.Link>
             <Card.Text>
                 <UserPersonaState personastate={playerSummary.personastate}/>
-                Last Log Off: {timeConverter(playerSummary.lastlogoff)}
-                <br></br>
-                Profile Created: {timeConverter(playerSummary.timecreated)}
-                <br></br>
-                Player Level: {badges.player_level}
-                <br></br>
-                Exp Progress:     
-                        
+                <div className="playerDetails">
+                    <div>Last Log Off:</div> <span>{timeConverter(playerSummary.lastlogoff)}</span>
+                    <br></br>
+                    <div>Profile Created:</div> <span>{timeConverter(playerSummary.timecreated)}</span>
+                    <br></br>
+                    <div>Player Level:</div> <span>{badges.player_level}</span>
+                    <br></br>
+                </div>
             </Card.Text>
-            <ProgressBar now={(badges.player_xp / (badges.player_xp + badges.player_xp_needed_to_level_up))*100} 
+            <div className="progressDiv">
+                <div>Exp Progress:</div>       
+                <ProgressBar now={(badges.player_xp / (badges.player_xp + badges.player_xp_needed_to_level_up))*100} 
                 label={badges.player_xp_needed_to_level_up + "\tneeded to level up"}/>   
+            </div>  
             </Card.Body>
         </Card>
         )
@@ -79,18 +82,19 @@ export const FriendSummary = (props) => {
             <Card className="friendsContainer">
             <Card.Header className="accordionHeader">
                 <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                Friends
+                <span>Friends <FontAwesomeIcon icon={faChevronDown} color="#00DFAB" /> </span>
                 </Accordion.Toggle>
             </Card.Header>
             <Accordion.Collapse eventKey="1">
-                <Card.Body className="friendsSummaryBody" style={{overflow: 'auto', height: '500px'}}>
+                <Card.Body className="friendsSummaryBody" style={{overflow: 'auto', height: '620px'}}>
                 {friendsSummary.map((friend, i) => {
                     return (
                     <React.Fragment>
                         <Card key={i} className="friendCard">
                         <Image alt="friend profile" src={friend.avatarfull}/>
-                        <br></br>
+                        <div classname="friendURL">
                         <a href={friend.profileurl} target="_blank" rel="noopener noreferrer">{friend.personaname}</a>
+                        </div>
                         <UserPersonaState personastate={friend.personastate}/>
                         </Card>
                     </React.Fragment>
@@ -149,7 +153,7 @@ export const Wishlist = (props) => {
 
         return (
         <React.Fragment>
-            <AccordionComponent className="wishAccordion" header="Wishlist" body={
+            <AccordionComponent classname="wishAccordion" header="Wishlist" body={
             <ListGroup className="wishlistBody" /*style={{overflow: 'auto', height: '500px'}}*/ as="ul" variant="flush">
             {
                 wishlist_games.map((game, i) => {
@@ -227,10 +231,12 @@ export const RecentlyPlayed = (props) => {
     if(recentlyPlayed.total_count > 0)
     {
         return(
-        <Accordion defaultActiveKey="0">
+        <Accordion className="recentAccordion" defaultActiveKey="0">
             <Card className="recentCard">
-            <Card.Header classNae="accordionHeader">
-                <Accordion.Toggle as={Button} variant="link" eventKey="0">Recently Played</Accordion.Toggle>
+            <Card.Header className="accordionHeader">
+                <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                    <span>Recently Played <FontAwesomeIcon icon={faChevronDown} color="#00DFAB" /></span>
+                    </Accordion.Toggle>
             </Card.Header>
 
             <Accordion.Collapse eventKey="0">
@@ -295,14 +301,34 @@ export const RecentlyPlayedBar= (props) => {
                 display:true,
                 text:'Recently Played Games',
                 fontSize:20,
-                fontColor: 'black'
+                fontColor: '#ecf0f1'
             },
             legend:{
                 labels: {
-                    fontColor: 'black'
+                    fontColor: '#ecf0f1'
                 },
                 display:true,
                 position:'right'
+            },
+            scales: {
+                xAxes: [{ 
+                    gridLines: {
+                        display: true,
+                        color: '#303853'
+                    },
+                    ticks: {
+                      fontColor: "#FFFFFF",
+                    },
+                }],
+                yAxes: [{
+                    gridLines: {
+                        display: true,
+                        color: '#303853'
+                    },
+                    ticks: {
+                        fontColor: "#FFFFFF",
+                      },
+                }],
             }
         }}
         />
@@ -361,15 +387,35 @@ export const TopTenOwnedGamesBar = (props) => {
             display:true,
             text:'Top 10 Owned Games Playtime',
             fontSize:20,
-            fontColor: 'black'
+            fontColor: '#ecf0f1'
             },
             legend:{
                 labels: {
-                    fontColor: 'black'
+                    fontColor: '#ecf0f1'
                 },
             display:true,
             position:'right'
-            }
+            },
+            scales: {
+                xAxes: [{ 
+                    gridLines: {
+                        display: true,
+                        color: '#303853'
+                    },
+                    ticks: {
+                      fontColor: "#FFFFFF",
+                    },
+                }],
+                yAxes: [{
+                    gridLines: {
+                        display: true,
+                        color: '#303853'
+                    },
+                    ticks: {
+                        fontColor: "#FFFFFF",
+                      },
+                }],
+            } 
         }}
         />
     )
@@ -392,7 +438,7 @@ export const SteamStatistics = (props) => {
         if(recentlyPlayed.total_count > 0 && ownedGames.game_count === 0)
         {
             return(
-            <AccordionComponent header="Steam Statistics" body={
+            <AccordionComponent classname="statAccordion" header="Steam Statistics" body={
                 <React.Fragment>
                 <RecentlyPlayedBar games={recentlyPlayed.games}/>
                 </React.Fragment>
@@ -400,7 +446,7 @@ export const SteamStatistics = (props) => {
             );
         } else if(recentlyPlayed.total_count === 0 && ownedGames.game_count > 0) {
             return(
-            <AccordionComponent header="Steam Statistics" body={
+            <AccordionComponent classname="statAccordion" header="Steam Statistics" body={
                 <React.Fragment>
                 <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
                 </React.Fragment>
@@ -408,7 +454,7 @@ export const SteamStatistics = (props) => {
             );
         } else {
             return(
-            <AccordionComponent header="Steam Statistics" body={
+            <AccordionComponent classname="statAccordion" header="Steam Statistics" body={
                 <React.Fragment>
                 <RecentlyPlayedBar games={recentlyPlayed.games}/>
                 <TopTenOwnedGamesBar games={ownedGames.games} gameslist={gamesList}/>
@@ -429,13 +475,15 @@ export const SteamStatistics = (props) => {
 export const AccordionComponent = (props) => {
     const header = props.header;
     const body = props.body;
+    const classname = props.classname;
+
     return (
         <React.Fragment>
-        <Accordion defaultActiveKey="0">
+        <Accordion className={classname} defaultActiveKey="0">
             <Card>
-            <Card.Header className="accordionHeader">
+            <Card.Header>
                 <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                {header}
+                <span>{header} <FontAwesomeIcon icon={faChevronDown} color="#00DFAB" /></span>
                 </Accordion.Toggle>
             </Card.Header>
             <Accordion.Collapse eventKey="0">
