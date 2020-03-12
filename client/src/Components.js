@@ -36,7 +36,7 @@ export const UserProfile = (props) => {
         <Card className="userProfile">
             <Card.Img variant="top" src={playerSummary.avatarfull} />
             <Card.Body>
-            <Card.Title style={fontStyle}>{playerSummary.personaname}</Card.Title>
+            <Card.Title id="personName" style={fontStyle}>{playerSummary.personaname}</Card.Title>
             <Card.Link href={playerSummary.profileurl} target="_blank">Steam Profile <FontAwesomeIcon icon={faLink} color="black" /></Card.Link>
             <Card.Text>
                 <UserPersonaState personastate={playerSummary.personastate}/>
