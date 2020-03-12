@@ -237,7 +237,7 @@ class App extends Component{
                       <InputGroup.Append>
                         <Button className="searchButton" type="Submit" value="Submit" variant="light" onClick={this.callBackendAPI} readOnly><FontAwesomeIcon icon={faSearch} color="black" /></Button>
                       </InputGroup.Append>
-                      <ClipLoader size={50} color={"#555555"} loading={this.state.loading}/>
+                      <ClipLoader size={50} color={"#ecf0f1"} loading={this.state.loading}/>
                     </InputGroup>
                 </Form>
             </div>
