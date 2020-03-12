@@ -303,17 +303,32 @@ export const RecentlyPlayedBar= (props) => {
                 fontSize:20,
                 fontColor: '#ecf0f1'
             },
-            yAxes: [{
-                gridLines: {
-                    zeroLineColor: '#ffcc33'
-                }
-            }],
             legend:{
                 labels: {
                     fontColor: '#ecf0f1'
                 },
                 display:true,
                 position:'right'
+            },
+            scales: {
+                xAxes: [{ 
+                    gridLines: {
+                        display: true,
+                        color: '#303853'
+                    },
+                    ticks: {
+                      fontColor: "#FFFFFF",
+                    },
+                }],
+                yAxes: [{
+                    gridLines: {
+                        display: true,
+                        color: '#303853'
+                    },
+                    ticks: {
+                        fontColor: "#FFFFFF",
+                      },
+                }],
             }
         }}
         />
@@ -380,7 +395,27 @@ export const TopTenOwnedGamesBar = (props) => {
                 },
             display:true,
             position:'right'
-            }
+            },
+            scales: {
+                xAxes: [{ 
+                    gridLines: {
+                        display: true,
+                        color: '#303853'
+                    },
+                    ticks: {
+                      fontColor: "#FFFFFF",
+                    },
+                }],
+                yAxes: [{
+                    gridLines: {
+                        display: true,
+                        color: '#303853'
+                    },
+                    ticks: {
+                        fontColor: "#FFFFFF",
+                      },
+                }],
+            } 
         }}
         />
     )
