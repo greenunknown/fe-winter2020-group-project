@@ -5,9 +5,9 @@ const bent = require('bent');
 const getJSON = bent('json', 200, 500);
 const app = express();
 const port = process.env.PORT || 5000;
-const fs = require('fs');
-let rawdata = fs.readFileSync('steamconfig.json');
-let key = JSON.parse(rawdata).apiKey;
+// const path = require('path');
+const dotenv = require('dotenv').config();
+let key = process.env.APIKEY
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -15,6 +15,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 let corsOptions = {};
 app.use(cors());
+
+// // Serve static assets if in production
+// if(process.env.NODE_ENV === 'production') {
+//     // Set static folder
+//     app.use(express.static('../client/build'));
+
+//     app.get('*', (req, res) => {
+//         response.sendSFile(path.resolve(__dirname, '..', 'client', 'build', 'index.html'))
+//     });
+// }
 
 app.post('/search', (req, res) => {
     let steamName = req.body.userId;
