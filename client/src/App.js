@@ -99,7 +99,7 @@ class App extends Component{
     }
 
     try {
-      response = await fetch('http://localhost:5000/search', {
+      response = await fetch('/search', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
