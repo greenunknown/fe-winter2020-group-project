@@ -5,9 +5,12 @@ const bent = require('bent');
 const getJSON = bent('json', 200, 500);
 const app = express();
 const port = process.env.PORT || 5000;
-// const path = require('path');
 const dotenv = require('dotenv').config();
 let key = process.env.APIKEY
+const path = require('path');
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
